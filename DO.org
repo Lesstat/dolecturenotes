@@ -115,7 +115,7 @@ In other words the goal is to find a flow f  which maximizes $$\sum_{e=(s,.)}f(e
           a -> t [label="5"]
   }
 #+END_SRC
-#+CAPTION: Remaining capacites in the network
+#+CAPTION: Remaining capacities in the network
 #+RESULTS:
 [[file:images/graph5.jpg]]
 - It seams that no more flow can be sent from s to t since the
@@ -155,7 +155,7 @@ In other words the goal is to find a flow f  which maximizes $$\sum_{e=(s,.)}f(e
           t -> b [label="10",color="green", fontcolor="green"]
   }
 #+END_SRC
-#+CAPTION: Residual Network: Backedges in green. Next used path in red.
+#+CAPTION: Residual Network: Back-edges in green. Next used path in red.
 #+RESULTS:
 [[file:images/graph7.jpg]]
 #+BEGIN_SRC dot :file images/graph8.jpg
@@ -175,23 +175,22 @@ In other words the goal is to find a flow f  which maximizes $$\sum_{e=(s,.)}f(e
 [[file:images/graph8.jpg]]
 
 ** Max Flow
-
 *** Ford Fulkerson-Algorithm
 - Def:
-  - For a given network G(V,E,cap) 
-  - and a valid flow $f: E -> N$
-  - the _residual network_ G_f(V, E_f, cap_f) is defined as follows:
+  - For a given network $G(V,E,cap)$
+  - and a valid flow $f: E -> \mathbb{N}$
+  - the _residual network_ $G_f(V, E_f, cap_f)$ is defined as follows:
     - $\forall e \in E$ with $cap(e) > f(e)$ we have $e \in E_f$ with
       $cap_f(e) = cap(e) - f(e)$
-    - "if there is capacity left on edge, this edge is also in E_f
+    - "if there is capacity left on edge, this edge is also in $E_f$
       with remaining capacity"
-    - $ \forall e=(v,w) \in E$ with f(e) > 0 we have  $e_R = (w,v) \in
+    - $ \forall e=(v,w) \in E$ with $f(e) > 0$ we have  $e_R = (w,v) \in
       E_f$ with $cap_f(e_R) = f(e)$ [fn:1]
     - "if currently x unit of flow are sent form v to w, we can
       virtually send x units form w to v by not sending anything from
       v to w"
 - Algorithm:
-  1. start with zero flow f(e) = 0 $\forall e \in E$
+  1. start with zero flow $f(e) = 0: \forall e \in E$
   2. Construct the residual network $G_f$
   3. Find a *augmenting* path from s to t in $G_f$, send as much flow across that
      path (as determined by its bottleneck edge of minimum capacity)
@@ -201,33 +200,43 @@ In other words the goal is to find a flow f  which maximizes $$\sum_{e=(s,.)}f(e
   since in each round the flow increases by at least 1, but is also
   upper bounded by $$\sum_{e=(s,.)}cap(e)$$ as well as
   $$\sum_{e=(.,t)}$$[fn:2]
-- Figure 2
+
+#+CAPTION: Example for bad choice of augmenting path. Left side shows residual network G_f, right side only the current flow
+#+ATTR_LaTeX: scale=0.50
+#+Label: fig:ff_bad_example
+[[file:images/Fig_02_edited.jpg]]
+- Why choosing the right path is important is illustrated by figure
+  ref:fig:ff_bad_example 
 - this continues until there is no path from s to t in G_f in this
-  example the unclever chouce of the augmenting path leads to a 1998
+  example the unclever choice of the augmenting path leads to a 1998
   augmentations.
-- more generally to a algorithm with running time O(val(f_opt) * (m+n))
-- f_opt : value of maximum flow
-- (m+n): Depth-first-search or Breadth-first-search[fn:3] 
-- not polynomial because val(f_{opt}) is not polynomial (depends on
+- more generally to a algorithm with running time $O(val(f_{opt}) * (m+n))$
+- $f_{opt}$ : value of maximum flow
+- $(m+n)$: Depth-first-search or Breadth-first-search[fn:3]
+- not polynomial because $val(f_{opt}$) is not polynomial (depends on
   encoding of the problem)
 
 **** Is the algorithm correct?
 - simple:
-- Figure 3 [fn:4]
+#+CAPTION: Prove for optimality by making a cut
+#+LABEL: fig:ff_optimality
+[[file:images/Fig_03_edited.jpg]]
+- Figure ref:fig:ff_optimality shows a cut that can be used to proof
+  optimality of the flow. [fn:4]
 - partition of the nodeset into 2 groups which separate s and t.
 - to sent flow from s to t the flow has to cross the boundary between
   the partition
 - all the crossing edges have maximum flow
 - Their summed capacity is 120 which is an upper bound for the flow
-- Any cut implies a upper bound for the flow
+- Any (such?) cut implies a upper bound for the flow
 - the value of the max flow = MinCut
 - Definition:
-  - Let G(V,E) be a directed graph, $\emptyset \neq A \not\subset V$ leer ungleich A ungleich menge V.
-  - the _directed cut_ induced by A is $dcut(A):= \{e=(v,w) | v\in A, w
-    \notin A\}$ that is, the set of edges having their source in A and
-    their target in V\A
+  - Let G(V,E) be a directed graph, $\emptyset \neq A \not\subseteq V$. 
+  - the _directed cut_ induced by A is $dcut(A):= \{e=(v,w) | v\in A,
+    w \notin A\}$ that is, the set of edges having their source in A
+    and their target in V\A
 - Lemma:
-  - For a directed graph G(V,E) with capacities cap: E -> N, let $A
+  - For a directed graph G(V,E) with capacities $cap: E -> \mathbb{N}$, let $A
     \subseteq V$  with $s \in A, t \in V \backslash A$
   - Then $$\sum_{e \in dcut(A)} cap(e)$$ is an upper bound on the
     maximum flow value from s to t.
@@ -248,8 +257,11 @@ In other words the goal is to find a flow f  which maximizes $$\sum_{e=(s,.)}f(e
     e=(v,w) be such that $|\{v,w\} \cap A| = 1$ (e is out of or into A)
   - Then the following holds
     - if $v \in A$ (e is outgoing of A) then f(e) = cap(e)
-    - if $v \notin A$ (e is incomming into A) the f(e) = 0
-    - Figure 4
+    - if $v \notin A$ (e is incoming into A) the f(e) = 0
+
+#+CAPTION: Cut A which includes all nodes reachable from s
+#+LABEL: fig:ff_cut
+    [[file:images/Fig_04_edited.jpg]] 
 - Proof:
   - $v \in A, w \notin A, e=(v,w)$ if f(e) < cap(e) then the edge
     (v,w) is still present in G_f
@@ -269,22 +281,23 @@ In other words the goal is to find a flow f  which maximizes $$\sum_{e=(s,.)}f(e
     bottleneck capacities
   - start with zero flow f=0
   - D = next smaller power of 2 of the max. capacity = $2^{\lfloor
-    log_2 cap_{max} \r_floor}$
-  - while $D \geq 1$ do
-    - G_f^D <- residual network of G wrt f, restricted to edges of
+    log_2(cap_{max}) \rfloor}$
+  - ~while~ $D \geq 1$ ~do~
+    - $G_f^D$ <- residual network of G wrt f, restricted to edges of
       capacity $\geq D$
-    - while ther is an augmenting path in G_f^D do
+    - ~while~ there is an augmenting path in $G_f^D$ ~do~
       - augment f
-      - recompute G_f^D
-    - od
+      - recompute $G_f^D$
+    - ~od~
     - D = D/ 2
-  - od
-  - return f
+  - ~od~
+  - ~return~ f
 - Obviously, algorithm is correct since at some point D = 1 and this
   is plain FF.
 
-* DO Tasks
-** NEXT DO fertig nachbereiten  
+* DO Tasks                                                         :noexport:
+** DONE DO fertig nachbereiten  
+CLOSED: [2016-10-26 Mi 19:23]
 :LOGBOOK:
 - State "NEXT"       from "REFILE"     [2016-10-23 So 18:43]
 :END:
@@ -295,7 +308,7 @@ CREATION_DATE: <2016-10-23 So 18:17>
 
 * Footnotes
 
-[fn:5] correctness proof of FF is commen Exam question. 
+[fn:5] correctness proof of FF is common Exam question. 
 
 [fn:4] In Exam sometimes: Why is it optimal what you have computed?
 The answer is not that in the residual network there is no path from s
