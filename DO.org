@@ -1,0 +1,213 @@
+#+Title: Discrete Optimization
+#+filetags: DO studium
+
+
+* Organizational
+- Slide Password: dopt15
+- exercises are not graded
+- everything organized over site: http://www.fmi.uni-stuttgart.de/alg/lehre/ws16/discrete-optimization-ws-1617/
+-
+
+** Multiple Choice Test
+- Dec 16
+- Feb 17
+- maybe a third
+- required for taking the exam
+** Exam 
+- is English
+* Network Flow
+- Given a directed graph G(V,E)
+- with capacity cap: E -> N_0
+#+BEGIN_SRC dot :file images/graph1.jpg
+  digraph g{
+          rankdir=LR;
+          {rank = same; a; b}
+          s -> a [label="10"] 
+          s -> b [label="5"]
+          a -> b [label="15"]
+          a -> t [label="5"]
+          b -> t [label="10"] 
+  }
+#+END_SRC
+
+#+RESULTS:
+[[file:images/graph1.jpg]]
+
+- Goal: compute a maximum flow f from s $\in$ V to t $\in$ V
+
+** Definition Flow
+A flow f is function f: E -> $N_0$ such that
+- $\forall e \in E: f(e) \leq c(e)$ with c as capacity
+  - This is called "capacity conservation"
+- $\forall v \in V \backslash \{s,t\}$:
+  - $$\sum_{e=(.,v)}f(e) =  \sum_{e=(v,.)}f(e)$$
+  - this is called "flow conservation"
+In other words the goal is to find a flow f  which maximizes $$\sum_{e=(s,.)}f(e)$$
+
+** Examples
+
+#+BEGIN_SRC dot :file images/graph2.jpg
+  digraph g{
+          rankdir=LR;
+          {rank = same; a; b}
+          s -> a [label=<<table border="0"><tr><td><font color="red">7</font> 10</td></tr></table>>]
+          s -> b [label=<<table border="0"><tr><td><font color="red">3</font> 5</td></tr></table>>]
+          a -> b [label=<<table border="0"><tr><td><font color="red">8</font> 15</td></tr></table>>]
+          a -> t [label=<<table border="0"><tr><td><font color="red">6</font> 5</td></tr></table>>]
+          b -> t [label=<<table border="0"><tr><td><font color="red">12</font> 10</td></tr></table>>]
+  }
+#+END_SRC
+
+#+RESULTS:
+[[file:images/graph2.jpg]]
+- flow in red, capacity in black
+- capacity constrained violated at:
+  - (a,t) (b,t)
+- flow constrained violated at:
+  - node a & b (Input not equal output 7 != 14 & 11 != 12)
+
+#+BEGIN_SRC dot :file images/graph3.jpg
+  digraph g{
+          rankdir=LR;
+          {rank = same; a; b}
+          s -> a [label=<<table border="0"><tr><td><font color="red">7</font> 10</td></tr></table>>]
+          s -> b [label=<<table border="0"><tr><td><font color="red">3</font> 5</td></tr></table>>]
+          a -> b [label=<<table border="0"><tr><td><font color="red">8</font> 15</td></tr></table>>]
+          a -> t [label=<<table border="0"><tr><td><font color="red">6</font> 5</td></tr></table>>]
+          b -> t [label=<<table border="0"><tr><td><font color="red">12</font> 10</td></tr></table>>]
+  }
+#+END_SRC
+
+** Max Flow
+- Figure 1
+
+*** Ford Fulkerson-Algorithm
+- Def:
+  - For a given network G(V,E,cap) 
+  - and a valid flow $f: E -> N$
+  - the _residual network_ G_f(V, E_f, cap_f) is defined as follows:
+    - $\forall e \in E$ with $cap(e) > f(e)$ we have $e \in E_f$ with
+      $cap_f(e) = cap(e) - f(e)$
+    - "if there is capacity left on edge, this edge is also in E_f
+      with remaining capacity"
+    - $ \forall e=(v,w) \in E$ with f(e) > 0 we have  $e_R = (w,v) \in
+      E_f$ with $cap_f(e_R) = f(e)$ [fn:1]
+    - "if currently x unit of flow are sent form v to w, we can
+      virtually send x units form w to v by not sending anything from
+      v to w"
+- Algorithm:
+  1. start with zero flow f(e) = 0 $\forall e \in E$
+  2. Construct the residual network $G_f$
+  3. Find a *augmenting* path from s to t in $G_f$, send as much flow across that
+     path (as determined by its bottleneck edge of minimum capacity)
+     and add this flow to f.
+  4. If no such path can be found return f. Otherwise goto 2
+- For _integral_ capacities this algorithm eventually terminates,
+  since in each round the flow increases by at least 1, but is also
+  upper bounded by $$\sum_{e=(s,.)}cap(e)$$ as well as
+  $$\sum_{e=(.,t)}$$[fn:2]
+- Figure 2
+- this continues until there is no path from s to t in G_f in this
+  example the unclever chouce of the augmenting path leads to a 1998
+  augmentations.
+- more generally to a algorithm with running time O(val(f_opt) * (m+n))
+- f_opt : value of maximum flow
+- (m+n): Depth-first-search or Breadth-first-search[fn:3] 
+- not polynomial because val(f_{opt}) is not polynomial (depends on
+  encoding of the problem)
+
+**** Is the algorithm correct?
+- simple:
+- Figure 3 [fn:4]
+- partition of the nodeset into 2 groups which separate s and t.
+- to sent flow from s to t the flow has to cross the boundary between
+  the partition
+- all the crossing edges have maximum flow
+- Their summed capacity is 120 which is an upper bound for the flow
+- Any cut implies a upper bound for the flow
+- the value of the max flow = MinCut
+- Definition:
+  - Let G(V,E) be a directed graph, $\emptyset \neq A \not\subset V$ leer ungleich A ungleich menge V.
+  - the _directed cut_ induced by A is $dcut(A):= \{e=(v,w) | v\in A, w
+    \notin A\}$ that is, the set of edges having their source in A and
+    their target in V\A
+- Lemma:
+  - For a directed graph G(V,E) with capacities cap: E -> N, let $A
+    \subseteq V$  with $s \in A, t \in V \backslash A$
+  - Then $$\sum_{e \in dcut(A)} cap(e)$$ is an upper bound on the
+    maximum flow value from s to t.
+- Pf:
+  - Consider any (maximum) flow form s to t. Each unit of flow has to
+    cross the boundary form A to V\A at least once.
+  - But in total at most $$\sum_{e \in dcut(A)} cap(e)$$ units of flow
+    can cross the boundary.
+- High-level ideal of correctness Proof from Ford-Fulkerson: look at
+  last residual network and use this to derive a directed cut of value
+  = current flow
+- In detail:
+  - Let us take as A the set of nodes reachable from s in the last
+    residual network before termination
+  - Note. $t \notin A$ since we terminated.
+- Lemma:
+  - Let f be the flow produced by FF for a network G(V,E,cap) and let
+    e=(v,w) be such that $|\{v,w\} \cap A| = 1$ (e is out of or into A)
+  - Then the following holds
+    - if $v \in A$ (e is outgoing of A) then f(e) = cap(e)
+    - if $v \notin A$ (e is incomming into A) the f(e) = 0
+    - Figure 4
+- Proof:
+  - $v \in A, w \notin A, e=(v,w)$ if f(e) < cap(e) then the edge
+    (v,w) is still present in G_f
+  - => if $v \in A$ the also $w \in A$ -> contradiction
+  - $v \notin A, w \in A, e=(v,w)$ if f(e) > 0 then the edge $(w,v) \in G_f$
+  - =>  $v \in A$ -> contradiction
+  - qed
+- This immediately implies correctness of FF as the flow computed by
+  FF has value $$\sum_{e=(v, w), v \in A, w \notin A} f(e) =
+  \sum_{e=(v, w), v \in A, w \notin A} cap(e)$$
+- second sum is the upper bound for flow by the set A [fn:5]
+
+**** Capacity scaling
+- Idea
+  - First look only for augmenting paths with somehow "large"
+    bottleneck capacity, only if no such paths exist, look for smaller
+    bottleneck capacities
+  - start with zero flow f=0
+  - D = next smaller power of 2 of the max. capacity = $2^{\lfloor
+    log_2 cap_{max} \r_floor}$
+  - while $D \geq 1$ do
+    - G_f^D <- residual network of G wrt f, restricted to edges of
+      capacity $\geq D$
+    - while ther is an augmenting path in G_f^D do
+      - augment f
+      - recompute G_f^D
+    - od
+    - D = D/ 2
+  - od
+  - return f
+- Obviously, algorithm is correct since at some point D = 1 and this
+  is plain FF.
+
+* DO Tasks
+** NEXT DO fertig nachbereiten  
+:LOGBOOK:
+- State "NEXT"       from "REFILE"     [2016-10-23 So 18:43]
+:END:
+:PROPERTIES:
+CREATION_DOC: [[file:~/ownCloud%20new/Flo/Documents/Selbstorganisation/diary.org::*Get%20Clear][Get Clear]] 
+CREATION_DATE: <2016-10-23 So 18:17>
+:END:
+
+* Footnotes
+
+[fn:5] correctness proof of FF is commen Exam question. 
+
+[fn:4] In Exam sometimes: Why is it optimal what you have computed?
+The answer is not that in the residual network there is no path from s
+to t. 
+
+[fn:3] |E| = m & |V| = n
+
+[fn:2] typical exam question: Why does Ford Fulkerson terminate?
+
+[fn:1] e_R = Reverse edge 
