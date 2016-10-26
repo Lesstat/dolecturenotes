@@ -2,3 +2,6 @@
 /Tim/*
 *.pdf
 /ltxpng/*
+/images/*
+*.bbl
+*.tex
