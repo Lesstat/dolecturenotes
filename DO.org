@@ -58,9 +58,9 @@ In other words the goal is to find a flow f  which maximizes $$\sum_{e=(s,.)}f(e
   }
 #+END_SRC
 
+#+CAPTION: Network with flow. Flow in red, capacity in black
 #+RESULTS:
 [[file:images/graph2.jpg]]
-- flow in red, capacity in black
 - capacity constrained violated at:
   - (a,t) (b,t)
 - flow constrained violated at:
@@ -71,15 +71,110 @@ In other words the goal is to find a flow f  which maximizes $$\sum_{e=(s,.)}f(e
           rankdir=LR;
           {rank = same; a; b}
           s -> a [label=<<table border="0"><tr><td><font color="red">7</font> 10</td></tr></table>>]
-          s -> b [label=<<table border="0"><tr><td><font color="red">3</font> 5</td></tr></table>>]
-          a -> b [label=<<table border="0"><tr><td><font color="red">8</font> 15</td></tr></table>>]
-          a -> t [label=<<table border="0"><tr><td><font color="red">6</font> 5</td></tr></table>>]
-          b -> t [label=<<table border="0"><tr><td><font color="red">12</font> 10</td></tr></table>>]
+          s -> b [label=<<table border="0"><tr><td><font color="red">2</font> 5</td></tr></table>>]
+          a -> b [label=<<table border="0"><tr><td><font color="red">2</font> 15</td></tr></table>>]
+          a -> t [label=<<table border="0"><tr><td><font color="red">5</font> 5</td></tr></table>>]
+          b -> t [label=<<table border="0"><tr><td><font color="red">4</font> 10</td></tr></table>>]
   }
 #+END_SRC
 
+#+RESULTS:
+[[file:images/graph3.jpg]]
+- valid flow value of 9 (amount that leaves s / goes into t)
+- flow on (s,b) and (b,t) could be increased to achieve an even better
+  flow value
+- _easy_: check whether a flow value is valid or feasible
+- _much harder_: check whether flow is maximum value
+- But even if we could check for optimality how to compute the maximum
+  flow is unclear.
+
+** "Natural" Algorithm 
+- find a path from s to t where we can send as much flow as possible.
+#+BEGIN_SRC dot :file images/graph4.jpg
+  digraph g{
+          rankdir=LR;
+          {rank = same; a; b}
+          s -> a [label="10", color="red"] 
+          s -> b [label="5"]
+          a -> b [label="15", color="red"]
+          a -> t [label="5"]
+          b -> t [label="10", color="red"] 
+  }
+#+END_SRC
+
+#+CAPTION: Network with path that can send maximum flow in red.
+#+RESULTS:
+[[file:images/graph4.jpg]]
+- send 10 units of flow on red path
+#+BEGIN_SRC dot :file images/graph5.jpg
+  digraph g{
+          rankdir=LR;
+          {rank = same; a; b}
+          s -> b [label="5"]
+          a -> b [label="5"]
+          a -> t [label="5"]
+  }
+#+END_SRC
+#+CAPTION: Remaining capacites in the network
+#+RESULTS:
+[[file:images/graph5.jpg]]
+- It seams that no more flow can be sent from s to t since the
+  remaining capacities do not allow for additional capacity/flow to be
+  sent 
+- But this flow of value 10 is not optimal, as we have already seen a
+  flow of value 12. This can be fixed by the following idea:
+  - If flow is sent on an edge, it is possible to sent flow into the
+    opposite direction by reducing the sent flow.
+- So algorithm works now as follows:
+#+BEGIN_SRC dot :file images/graph6.jpg
+  digraph g{
+          rankdir=LR;
+          {rank = same; a; b}
+          s -> a [label=<<table border="0"><tr><td><font color="red">10</font> 10</td></tr></table>>]
+          s -> b [label=<<table border="0"><tr><td>5</td></tr></table>>]
+          a -> b [label=<<table border="0"><tr><td><font color="red">10</font> 15</td></tr></table>>]
+          a -> t [label=<<table border="0"><tr><td>5</td></tr></table>>]
+          b -> t [label=<<table border="0"><tr><td><font color="red">10</font> 10</td></tr></table>>]
+  }
+#+END_SRC
+#+CAPTION: Current Flow value
+#+RESULTS:
+[[file:images/graph6.jpg]]
+- now construct residual network:
+#+BEGIN_SRC dot :file images/graph7.jpg
+  digraph g{
+          rankdir=LR;
+          {rank=source s}
+          {rank=sink t}
+          {rank = same; a; b}
+          a -> s [label=<<table border="0"><tr><td><font color="green">10</font></td></tr></table>>, color="green"]
+          s -> b [label=<<table border="0"><tr><td><font color="red">5</font> 5</td></tr></table>>, color="red"]
+          a -> b [label=<<table border="0"><tr><td>5</td></tr></table>>]
+          b -> a [label=<<table border="0"><tr><td><font color="green">10</font> <font color="red">5</font></td></tr></table>>, color="green", fontcolor="green" ]
+          a -> t [label=<<table border="0"><tr><td><font color="red">5</font> 5</td></tr></table>>, color="red"]
+          t -> b [label="10",color="green", fontcolor="green"]
+  }
+#+END_SRC
+#+CAPTION: Residual Network: Backedges in green. Next used path in red.
+#+RESULTS:
+[[file:images/graph7.jpg]]
+#+BEGIN_SRC dot :file images/graph8.jpg
+  digraph g{
+          rankdir=LR;
+          {rank = same; a; b}
+          s -> a [label=<<table border="0"><tr><td><font color="red">10</font> 10</td></tr></table>>]
+          s -> b [label=<<table border="0"><tr><td><font color="red">5</font> 5</td></tr></table>>]
+          a -> b [label=<<table border="0"><tr><td><font color="red">5</font> 15</td></tr></table>>]
+          a -> t [label=<<table border="0"><tr><td><font color="red">5</font> 5</td></tr></table>>]
+          b -> t [label=<<table border="0"><tr><td><font color="red">10</font> 10</td></tr></table>>]
+  }
+#+END_SRC
+
+#+CAPTION: Maximum flow value of 15
+#+RESULTS:
+[[file:images/graph8.jpg]]
+
 ** Max Flow
-- Figure 1
 
 *** Ford Fulkerson-Algorithm
 - Def:
