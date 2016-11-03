@@ -344,6 +344,66 @@ inner loop, the flow grow by at least D/2.
     edge (the bottleneck edges) is eliminated[fn:9] from E_k, after at
     most m steps the length of the shortest path from s to t is increased.
 
+* Exercises
+
+** Sheet 1
+
+*** Problem 2
+- case 1: There is an s-t path with infinite capacity
+  - flow from s to t is unbounded ( $\infty$ )
+- case 2: There is no s-t path with inf. capacity
+  - there is an s-t-cut where all outgoing edges have finite capacity
+  - FF increases total flow by at least 1 in each iteration
+  - Max flow is upper bounded by a finite number
+  - => Ford Fulkerson will terminate in this case
+
+*** Problem 3
+- a): Capacity and flow conservation are fulfilled, so the flow is
+  valid 
+- b): all edges going into t are saturated. So the flow is optimal.
+  - more formal:
+  - the capacity of edges in $dcut(\{s,a,b,c,d,e,f\})$ gives an upper
+    bound to total flow in the network as $s \in A, t \notin A$
+  - The flow matches the upper bound => optimality
+
+*** Problem 4
+- a):
+  - Construct a network with s as source and t as sink
+  - add a node for each student
+  - add an edge from s to each student with capacity 1
+  - add a node for each traineeship
+  - add an edge from each traineeship to t with capacity 1
+  - add edges from each student to the traineeship he/she prefers with
+    capacity 1
+  - If the maximum flow equals n (number of students) the preferences
+    can be fulfilled.
+  - a backedge from a traineeship to a student in the last residual
+    network implies that the student gets the traineeship.
+  - more formal:
+    - set of students S $|S| = n$
+    - set of traineeships T $|T| = m$
+    - $ m \geq n$
+    - Figure 1
+    - $cap(e) = 1 \forall e \in E$
+    - if max flow = n $\rightarrow$ there is a valid assignment of
+      students to traineeships
+    - if $max flow < n$ $\rightarrow$ there is no such assignment
+    - How to get a valid assignment:
+      - $\forall e=(v,u), v \in S, u \in T$ if f(e) = 1
+      - student v is assigned to traineeship u
+- b):
+  - Figure 2
+  - Given directed G(V,E)
+  - construct G'(V',E')
+  - $\forall v \in V\backslash\{s,t\}$ introduce $v',v'' \in V'$
+    $(v',v'') \in E'$
+  - rename s to s'' and t to t' in G'
+  - $\forall e=(v,u) \in E$ introduce $(v'',u') \in E'$
+  - assign cap=1 to every Edge
+  - maximum flow from s to t in G' yields the number of node-disjoint paths in G
+  - Figure 3
+
+
 * Footnotes
 
 [fn:9] used to its full capacity
