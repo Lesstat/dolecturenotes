@@ -3,19 +3,6 @@
 #+filetags: DO studium
 
 
-* Organizational                                                   :noexport:
-- Slide Password: dopt15
-- exercises are not graded
-- everything organized over site: http://www.fmi.uni-stuttgart.de/alg/lehre/ws16/discrete-optimization-ws-1617/
--
-
-** Multiple Choice Test
-- Dec 16
-- Feb 17
-- maybe a third
-- required for taking the exam
-** Exam 
-- is English
 * Network Flow
 - Given a directed graph G(V,E)
 - with capacity cap: E -> N_0
