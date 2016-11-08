@@ -285,7 +285,7 @@ In other words the goal is to find a flow f  which maximizes $$\sum_{e=(s,.)}f(e
 - Lemma:
   - Let $f_D$ be the flow after completing augmentations with bound
     D. Then the value of max flow is bounded by the $val(f_D) + m * D$
-- Proof:
+- Proof: -> *wrong Proof -> Compare to scribe notes*
   - Consider the residual network $G_f^D$ after the last augmentation
     for value D. and let A be the set of nodes from s in $G_f^D$
   - Then consider the original network G, the flow $f_D$ and the set
@@ -344,6 +344,88 @@ inner loop, the flow grow by at least D/2.
     edge (the bottleneck edges) is eliminated[fn:9] from E_k, after at
     most m steps the length of the shortest path from s to t is increased.
 
+** MinCostFlow (Better MinCostMaxFlow Problem)
+- Figure 1
+- Every node can either be a source or a sink
+- Example
+  - Figure 2
+  - is a valid flow as:
+    - on every edge we do not exceed the capacity constraint
+      - $\forall e \in G: f(e) \leq cap(e)$
+    - Flow conservation are satisfied:
+      - $$\forall v \in G: \sum_{e=(v,.)}f(e) = \sum_{e=(.,v)}f(e) +b(v)$$
+      - b(v) demand/supply of node v ( flow entering or leaving at node v )
+  - This flow has cost of:
+    - $$\sum_{e \in E}f(e)*cost(e)$$
+    - $=f(ab)*cost(ab)+ f(ac)*cost(ac)+f(bc)*cost(bc)+f(bd)*cost(bd)+f(cd)*cost(cd)$
+    - $= 2*2 + 2*2 + 1 *10 + 2*3 + 0*1 = 24$
+*** Formal Problem Definition
+Given a directed network G(V,E) witch capacities $cap: E \rightarrow
+\mathbb{N}$ and $cost:E \rightarrow \mathbb{Z}$ and a function $b:V
+\rightarrow \mathbb{Z}$ which determines whether a node v has a
+surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
+- $$\sum_{v:b(v)>0}b(v) = - \sum_{v:b(v)<0} b(v)$$
+- we want to find a flow $f: E \rightarrow \mathbb{N}$ such that
+  - $\forall e \in E:  o \leq f(e) \leq cap(e)$ "capacity constraint"
+  - $$\forall v \in V: b(v) + \sum_{e=(w,v)}f(e) = \sum_{e=(v,w)}f(e)$$
+    "flow conservation constraint"
+  - and minimizing $$\sum_{e\in E}f(e)*cost(e)$$
+*** High level Algorithm idea:
+1. Find some feasible flow (-> exercise) (not caring about cost)
+2. Optimize cost of the flow
+*** ad 2. Idea
+- "Reroute" flow as long this reduces the costs without violating constraints
+- One possibility to reroute flow without violating flow conservation
+  constraints is sending flow in a cycle.
+  - the flow for Nodes not in the cycle doesn't change
+  - the flow for Nodes on the cylce they gain as much as they loose
+- If sending flow along a cycle decreases total cost we should do so.
+- As in maxflow we consider the residual network $G_f(V,E_f)$ for a
+  given network G(V,E) and flow f.
+- For each edge $e \in E$ we construct up to two edges in $E_f$ as follows:
+  - if f(e) < cap(e) then there is an edge $e' = (v,w) \in E_f$ with
+    - cost $cost(e')= cost(e)$ and
+    - $cap(e') = cap(e) - f(e)$
+  - if f(e)>0 then there is a virtual edge $e'' =(v,w)\in E_f$ with
+    - $cap(e'') = f(e)$ and
+    - $cost(e'') = - cost(e)$
+- Example
+  - *Exersice* use cycle acdba instead and cont cycle cancelling until termination
+  - Figure 3
+  - There is a negative cycle acba of cost -10.
+  - For every unit of flow sent across that cycle the total cost
+    decreases by 10
+  - We can send up to 1 unit of flow around (due to bottleneck edge ac)
+  - resulting flow and residual network, which contains no negative cycle
+  - Figure 4
+  - Alg. finishes  [fn:10]
+- Algorithm is also called "cycle cancelling" algorithm as once flow
+  is sent across negative cycle, it will not be present in the next
+  residual network anymore.
+- Clearly, algorithm terminates as cost decreases by at least 1 per
+  cycle cancelling.
+*** Proof
+- Lemma
+  - Let f be a vlaid flow in G, $G_f$ the respective residual network.
+  - Then, f is a minCost flow if and only if $G_f$ does not contain a
+    negative cylce.
+- Proof:
+  - The "=>" is trivial
+  - "<=" assume $G_f$ does not contain a negative cylce but f is not a
+    minCost flow. We will derive a contradiction hence proofing the Lemma.
+  - Let $f^*$ be a minCost flow and consider the flow-difference f' =
+    $f^* - f$
+  - we claim f' has to contain a negative cycle
+  - Clearly, cost(f')< 0 since $cost(f^*)< cost(f)$
+  - Furthermore f' must satisfy flow conservation (inflow = outflow),
+    that is at any v, the outflow of f' must equal the inflow of f'.
+  - Figure 5
+  - Hence f' can be decomposed into a set of cycles
+  - Figure 6
+  - Since the total cost of the cycles is negative, one of the cycles
+    must have negative cost.
+  - This cycle is also a negative cost cycle in $G_f$
+  - this is a contradiction
 * Exercises
 
 ** Sheet 1
@@ -405,6 +487,9 @@ inner loop, the flow grow by at least D/2.
 
 
 * Footnotes
+
+[fn:10] In Exam probably at least one question where MaxFlow or
+MinCostFlow is computed step by step by hand
 
 [fn:9] used to its full capacity
 
