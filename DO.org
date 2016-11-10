@@ -426,6 +426,73 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
     must have negative cost.
   - This cycle is also a negative cost cycle in $G_f$
   - this is a contradiction
+*** Problem to solve
+- Given a directed weighted graph G(V,E,c) with edge costs $c : E
+  \rightarrow \mathbb{Z}$ find a negative cycle.
+- Idea to find negative cycles:
+  - Create n+1 copies of the V
+  - Figure 1
+  - Connect node v in layer (i) with node w in layer (i+1) iff [fn:11]
+    $(v,w) \in E$ (same costs)
+  - Then $\forall v_i$ compute shortest path distances from $v_i^{(1)}$
+    to all other nodes in this layered graph.
+  - if there exists a node $v_i^{(j)}, j > 1$ with distance <0, we have
+    found a negative cycle starting in $v_i$
+- Running Time:
+  - Computing shortest path distances from $v_1^{(1)}$ costs O(n*m)
+  - => in total we can find a negative cycle $O(n^2m)$
+- Finding the "most negative" cycle (which seems desirable to decrease
+  cost as much as possible) is NP-hard unfortunately, reduction via
+  Hamilton Cycle Problem [fn:12].
+*** Possible Running Time Improvements
+- Finding the cycle C minimizing $\frac{cost(c)}{|C|}$, that is the
+  min mean cost cycle (in fact using the same algorithm).
+- If always the min mean cost cycle is cancelled, one can guarantee
+  polynomial running time of the cycle cancelling algorithm. (no
+  details here/ not part of the exam)
+*** Application of min-Cost-Flow
+- Consider a set of jobs J and a set of workers W.
+- Each worker $w \in W$ has the qualification to perform jobs $J_w
+  \subseteq J$
+- Question
+  - Is there an assignment of jobs to workers such that 
+  - every job is done
+  - no worker performs more than one job
+  - no worker performs a job he is not qualified for
+  - Figure 2
+- Extension with costs
+  - worker w performing job j incurs cost of c(w,j)
+  - Goal: Find assignment of jobs to works minimizing total cost.
+  - add costs c(w,j) to edge e=(w,j). Use min-Cost-Flow
+- Heiratssatz (not relevant for Exam)
+  - Figure 3
+  - Q: Is there an assignment of men to women such that everyone is
+    married (without fighting)
+  - Hall's Theorem:
+    - Assignment possible if and only if $\forall S \subseteq M: |
+      N(S)| \geq |S|$ [fn:13]
+**** Airplane hopping
+- Consider a small airline with only one plane serving n-1 cities in a
+  round trip every day.
+- The airline makes money by picking up passengers at $v_i$ and dropping
+  them off at $v_j$
+- Unfortunately the plane is not big enough to transport all passengers.
+- Assume there are
+  - t_{ij} passengers who want to go from v_i to v_j willing to pay a
+    fare of
+  - f_{ij} for that
+  - the plane has p seats.
+- which passengers should be picked up to maximize the revenue?
+- Figure 4
+- e.g:
+  - 2 from v_1 -> v_3 => 6 €
+  - +    1 for v_2 -> v_4 => 4 €
+  - sums to 10 €
+  - OR
+  - 3 from v_2 -> v_4 => 12€
+- Modelling as MinCostFlow Problem
+- Figure 5
+- Nodes i,j represents passengers who want to go from i to j. [fn:14] 
 * Exercises
 
 ** Sheet 1
@@ -487,6 +554,17 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
 
 
 * Footnotes
+
+[fn:14] There could be a modelling exercise in the exam
+
+[fn:13] There is a connection to the set A in the proof of Ford
+Fulkerson. (A plays the roll of S)
+
+
+[fn:12] Given a graph G(V,E), does there exist a simple cycle
+containing all nodes.
+
+[fn:11] if and only iff
 
 [fn:10] In Exam probably at least one question where MaxFlow or
 MinCostFlow is computed step by step by hand

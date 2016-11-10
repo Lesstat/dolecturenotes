@@ -6,3 +6,4 @@
 *.bbl
 *.tex
 *.gz
+ltximg/*
