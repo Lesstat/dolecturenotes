@@ -406,12 +406,12 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   cycle cancelling.
 *** Proof
 - Lemma
-  - Let f be a vlaid flow in G, $G_f$ the respective residual network.
+  - Let f be a valid flow in G, $G_f$ the respective residual network.
   - Then, f is a minCost flow if and only if $G_f$ does not contain a
     negative cylce.
 - Proof:
-  - The "=>" is trivial
-  - "<=" assume $G_f$ does not contain a negative cylce but f is not a
+  - The ''=>'' is trivial
+  - ''<='' assume $G_f$ does not contain a negative cylce but f is not a
     minCost flow. We will derive a contradiction hence proofing the Lemma.
   - Let $f^*$ be a minCost flow and consider the flow-difference f' =
     $f^* - f$
@@ -478,21 +478,103 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   them off at $v_j$
 - Unfortunately the plane is not big enough to transport all passengers.
 - Assume there are
-  - t_{ij} passengers who want to go from v_i to v_j willing to pay a
+  - $t_{ij}$ passengers who want to go from $v_i$ to $v_j$ willing to pay a
     fare of
-  - f_{ij} for that
+  - $f_{ij}$ for that
   - the plane has p seats.
 - which passengers should be picked up to maximize the revenue?
 - Figure 4
 - e.g:
-  - 2 from v_1 -> v_3 => 6 €
-  - +    1 for v_2 -> v_4 => 4 €
+  - 2 from $v_1$ -> $v_3$ => 6 €
+  - +    1 for $v_2$ -> $v_4$ => 4 €
   - sums to 10 €
   - OR
-  - 3 from v_2 -> v_4 => 12€
+  - 3 from $v_2$ -> $v_4$ => 12€
 - Modelling as MinCostFlow Problem
 - Figure 5
-- Nodes i,j represents passengers who want to go from i to j. [fn:14] 
+- Nodes i,j represents passengers who want to go from i to j. [fn:14]
+*** Alternative Approach to MinCostFlow (via successive shortest path)
+- Recall the Cycle Cancelling Flow Approach
+  1. Find some feasible flwo (e.g. FF)
+  2. "Kill" negatvice cost cycles from residual networks as long as possible
+- Always maintain feasibility, steer the solution towards optimality
+- Now
+  - Try to always keep a cost optimal solution (for part of the
+    problem), but iteratively cover more and more of the problem until
+    feasibility is reached [fn:15].
+  - We can compute the minCostFlow also via a simple variation of
+    Ford-Fulkersion (!)
+  - where in each round we choose as augmenting path the cheapest path
+    in the residual network connecting a supply node with a demand node.
+  - Figure 7
+  - Such a path can be found via a shortest path computation on a
+    slightly enhanced residual network (see picture above)
+  - Bellman-Ford can be used for that
+  - Eventually the flow will become feasible[fn:16] (and cost-optimal).
+- Proof-Idea: (for optimality)
+  - Show that all residual networks occuring throughout the course of
+    the algorithm have no negative cycles.
+  - The first residual network obviously has no neg. cycles
+  - Now consider the residual network after first augmentation and
+    assume it contains a negative cycle C.
+  - Decompose C into $C_1$ and $C_2$ where $C_1$ starts and ends with
+    negative cost edges and $C_2$ only contains edges with
+    non-negative costs
+  - Figure 8 Red edges have negative cost
+  - $cost(C_1)$ < 0 and $|cost(C_1)|$ > $cost(C_2)$
+  - For simplification assume that C_1 consists solely of negative
+    cost edges which also form a continuous reverse subpath of the first
+    augmenting path.
+  - Note that $C_2$ yields a path from $v_2$ to $v_1$ of $cost(C_2)$
+    < $|cost(C_1)|$
+  - contradiction to choice of augmenting paths as always cost-minimal
+    path
+- Now we know that the 1st (trivial) and 2nd residual networks contain
+  no negative cycles we can extend this to every following residual
+  network by applying the Johnson Shifting Theorem (1975)
+- Theorem
+  - Let G(V,E,c) be a directed weighted graph with possibly negative
+    edge costs but without negative cycles. Then there exists a
+    potential function $\phi V -> \mathbb{Z}$ such that the shifted
+    edge consts:
+    - $c'(v,w) = c(v,w) + \phi(v)  \phi(w)$
+    - are all non-negative and shortest paths in G(V,E,c) remain
+      shortest in G(V,E,c') and vice versa.
+- Proof: 
+  - w.l.o.g assume $\exists s \in V$ from which all other node
+    can be reached. 
+  - Since G(V,E,c) is free of negative cycles, shortest
+      patht distances are well-defined and can be computed using
+      Bellman-Ford in O(mn) time.
+  - Then define $\phi(v) = d_s(v)$.
+  - First observe that due to d_s() being shortest path distances we
+    have
+  - Figure 9
+  - $d_s(w) \leq d_s(v) + c(v,w)$ for every edge (v,w)
+  - => $c'(v,w) = c(v,w) + \phi(v) - \phi(w)$
+  - $= c(v,w) + d_s(v) - d_s(w)$
+  - $\geq 0$
+  - $c(v,w) \geq d_s(w) - d_s(v)$
+  - => all new edge costs are non-negative
+  - now consider some path $\pi = sv_0v_1...t$ in G(V,E,c'). The cost
+    of $\pi$ is:
+    - $$\sum_{(v,w) \in \pi}c'(v,w) = \sum_{(v,w) \in \pi} c(v,w) +
+      \phi(v) - \phi(w)$$
+    - $$= (\sum_{(v,w) \in \pi} c(v,w)) + \phi(s) - \phi(t)$$
+    - So the cost of a path $\pi$ from s to t in G(V,E,c') is the cost
+      in G(V,E,c) plus the potential of the source minus the potential
+      of the target.
+    - Since the latter two are invariant for different st-paths,
+      shortest paths in G(V,E,c) are shortest paths in G(V,E,c') and
+      vice versa.
+    - qed.
+- So we can apply this Johnson Theorem to 2nd residual network and
+  argue again as before.
+
+* Linear Programming
+- Example in \mathbb{R}^2
+  - LP is equivalent to "looking for the 'best' point satisfying some constraint"
+  - Figure 10
 * Exercises
 
 ** Sheet 1
@@ -555,6 +637,12 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
 
 * Footnotes
 
+[fn:16] Obvious, since it is like computing first feasible flow for
+cycle cancelling
+
+[fn:15] Approach will never violate the capacity constraints. But it
+will not always use all the supplies and all the demands.
+
 [fn:14] There could be a modelling exercise in the exam
 
 [fn:13] There is a connection to the set A in the proof of Ford
@@ -564,7 +652,7 @@ Fulkerson. (A plays the roll of S)
 [fn:12] Given a graph G(V,E), does there exist a simple cycle
 containing all nodes.
 
-[fn:11] if and only iff
+[fn:11] if and only if
 
 [fn:10] In Exam probably at least one question where MaxFlow or
 MinCostFlow is computed step by step by hand
