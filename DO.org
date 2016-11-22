@@ -575,6 +575,96 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
 - Example in \mathbb{R}^2
   - LP is equivalent to "looking for the 'best' point satisfying some constraint"
   - Figure 10
+- Example: Cheap and ''healthy'' diet
+  - Healthy life means
+    - at least 11 units of carbohydrates
+    - at least 7 units of protein
+    - at least 5 units of fat
+  - These can be acquired by eating
+    - meat, one unit of which has
+      - 1 unit carbohydrates
+      - 3 unit proteins
+      - 5 units of fat
+      - and costs 7 EUR
+    - tofu,
+      - 2 unit carbohydrates
+      - 2 unit protein
+      - 0 units of fat
+      - and costs 3 EUR
+    - bread (4,1,0) 2 EUR
+    - cheese (1,4,2) 4 EUR
+  - Goal: Determine how many units of tofu, bread, cheese or meat to
+    buy every day such that we live a healthy life and minimize the cost.
+  - We formalize this by introducing variables for the sought after
+    quantities:
+    - $X_m$: units of meat to buy every day
+    - $X_t$: units of tofu to buy every day
+    - $X_b$: units of bread to buy every day
+    - $X_c$: units of cheese to buy every day
+    - objective function
+      - $\min 7X_m + 3X_t + 2X_b + 4 X_c$
+    - constraints 
+      - $1X_m + 2X_t + 4X_b + 1X_c \geq 11$ (carbohydrate constraint)
+      - $3X_m + 2X_t + 1X_b + 4X_c \geq 7$ (protein constraint)
+      - $5X_m + 0X_t + 0X_b + 2X_c \geq 5$ (fat constraint)
+      - $7X_m + 3X_t + 2X_b + 4 X_c \geq 0$
+  - In general, a linear program is given as (in Standard form):
+    - $\max C_1X_1 + C_2X_2 + ... + C_nX_n$ [fn:17]
+    - $a_{ 11 }X_1 + a_{ 12 }X_2 +... + a_{ 1n }X_n \leq b_1$
+    - $a_{ 21 }X_1 + a_{ 22 }X_2 +... + a_{ 2n }X_n \leq b_2$
+    - $\vdots$
+    - $a_{ m1 }X_1 + a_{ m2 }X_2 +... + a_{ mn }X_n \leq b_m$
+  - This is a maximization problem in n variables X_1, X_2, ... X_n n
+    coefficients C in the objective function and m constraints given
+    by the coefficient matrix $A \in \mathbb{R}^{m \times n}$ and
+    right hand sides $b \in \mathbb{R}^m$ in short we write
+    - $\max c^Tx$
+    - $Ax \leq b$
+  - The j-th constraint here is :
+    - $$\sum_{i = 1}^n a_{ji}x_i \leq b_j$$
+  - _Easy_: Transform any linear program into standard Form[fn:18]
+** Geometric interpretation of linear programs 
+- A linear program can be thought of as a polyhedron in n-dimensional
+space. 
+- A polyhedron is an intersection of halfspaces
+  - in $\mathbb{R}^2$: halfspace ^= halfplane
+  - Figure 11 [fn:19]
+  - $\max x +y$
+  - $-x -y \leq -3$ (orange)
+  - $ 0.5x +y \leq 7$ (green)
+  - $ 0.5x -y \leq 0$ (red)
+  - $ -0.5x +y \leq 3$ (black)
+  - Feasible Region in red
+  - Figure 12 [fn:20]
+- Remarks
+  - The feasible region defined by an LP can be empty
+  - Figure 13
+  - The feasible region might also be unbounded (as well as the
+    optimal solution)
+  - Figure 14
+- Lemma
+  - If the feasible region is a bounded, non-empty polyhedron, the
+    maximum objective function value is (also) obtained at a corner
+    (vertex) of the polyhedron.
+- Proof
+  - Follows from convexity & exercises
+- corner of a polyhedron
+  - Intersection of n linearly independent constraints ( their
+    respective bounding hyperplane)
+  - in $\mathbb{R}^2$
+  - Figure 15
+** The (primal) Simplex Algorithm
+- Assume that C = (0,0,...,-1) that is, we are always looking for the
+  ''lowest'' feasible point.
+- Figure 16
+- Except for dimensions 1,2,3 it is very inefficient to just compute
+  the feasible reason explicitly and inspect all corners.
+- In general, a polyhedron in dimension n defined by m halfspaces can
+  have complexity $m^{ \lfloor \frac{n}{n}\rfloor}$
+- Why does simplex algorithm terminate? (assuming a corner is defined
+  by exactly n constraints)
+- There are only finitely many  < $ m \choose n$ corners and we
+  never visit one twice.
 * Exercises
 
 ** Sheet 1
@@ -636,6 +726,18 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
 
 
 * Footnotes
+
+[fn:20] drawing a correct coordinate system is important (points could
+get deducted). Also you need to be able to read of the solution from
+your drawing.
+
+[fn:19] In the exam drawing a linear program (feasible region) is
+always asked
+
+[fn:18] Possible exam question: transform this linear program into
+standard form
+
+[fn:17] He inconsistently uses n and d as dimension
 
 [fn:16] Obvious, since it is like computing first feasible flow for
 cycle cancelling
