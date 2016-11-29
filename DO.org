@@ -665,6 +665,101 @@ space.
   by exactly n constraints)
 - There are only finitely many  < $ m \choose n$ corners and we
   never visit one twice.
+*** Pivoting rules
+- Pivoting rules are also important to deal with degenerate configurations
+- Figure 1[fn:21]
+- In higher dimensions it can happen, that one keeps sitting in the
+  same corner only exchanging the constraints of basis -> no termination!
+- _Remedy_ there is a special pivoting rule called Bland's rule
+  (essentially kick out constraint with smallest index) guarantees
+  that no basis appears twice and hence eventually we leave the
+  corner. [fn:22]
+** Duality
+- Example:
+  - Consider the old example LP
+  - $\max x+y$
+  - s.t 
+    - $-x -y \leq -3$
+    - $0.5x+y \leq 7$
+    - $0.5x-y \leq 0$
+    - $-0.5x+y \leq 3$ 
+    - $x \leq 6$
+  - can be solved by simplex algorithm
+  - Assume we do not want to do that; can we easily find _upper
+    bounds_ to the optimal objective function value?
+  - Yes, consider the constraints :
+    - $0.5 x +y \leq 7$ (II) => *1.5 = $0.75x +1.5y \leq 10.5$
+    - $0.5x - y \leq 0$ (III)=> *0.5 $= 0.25x -0.5y \leq 0$
+    - Adding those
+      - $1x +1y \leq 10.5$
+  - So the optimal objective function value can never exceed 10.5!
+  - We could do even better by
+    - $0.5x+y \leq 7$ => *1  $ = 0.5x+y \leq 7$ 
+    - $x  \leq 6$ => *0.5 $ = 0.5x \leq 3$
+    - Addition
+      - $x+y \leq 10$
+- More generally, assume we have a LP in standard form
+  - $\max c_1x_1 + c_2x_2 + .. c_nx_n$
+  - st. $a_{ 11 }x_1 + a_{ 12 }x_2 + .... a_{ 1n }x_n \leq b_1$
+  - $\vdots$
+  - $a_{ m1 }x_1 + a_{ m2 }x_2 + .... a_{ mn }x_n \leq b_m$
+  - $\max c^Tx$
+  - $Ax \leq b$
+  - n: dimension
+  - m: number of constraints
+- The goal is to pick m multipliers (one for each constraint, all
+  $\geq 0$; =0 means constraint is not picked)
+- $\min y_1b_1 + y_2b_2 + ... + y_mb_m$
+- s.t.
+  - $a_{11}y_1 + a_{21}y_2 + ... + a_{m_1}y_m = c_1$
+  - $a_{12}y_1 + a_{22}y_2 + ... + a_{m2}y_m = c_2$
+  - $\vdots$
+  - $a_{1n}y_1 + a_{2n}y_2 + ... + a_{mn}y_m = c_n$
+  - m: variables
+  - n+m: constraints (non-negativity constraints are also counted)
+  - y: multipliers 
+- In short:
+  - $\min b^Ty$
+  - $A^Ty = c$
+  - $y_i \geq 0$
+- So for any primal LP:
+  - $\max c^Tx$
+  - $Ax \leq b$
+- There is a related dual LP [fn:23]
+  - $\min b^Ty$
+  - $A^Ty = c$
+  - $y_i \geq 0$
+- By construction every feasible solution to the dual LP yields an
+  upper bound on the objective function value of the primal (also
+  called _weak duality_).
+- It turns out that the optimum solution to the dual LP yields an
+  objective function value _exactly_ matching the optimal objective
+  function value of the primal (also called _strong duality_).
+** Economic Interpretation of the Dual
+- Consider nutrition LP from beginning
+- objective function
+  - $\min 7X_m + 3X_t + 2X_b + 4 X_c$
+- constraints 
+  - $1X_m + 2X_t + 4X_b + 1X_c \geq 11$ (carbohydrate constraint)
+  - $3X_m + 2X_t + 1X_b + 4X_c \geq 7$ (protein constraint)
+  - $5X_m + 0X_t + 0X_b + 2X_c \geq 5$ (fat constraint)
+  - $X_m,X_t,X_b,X_c \geq 0$
+- Let us adopt the view of a producer of nutrition pills. His goal is
+  to set prices y_c, y_p, y_f for each type of pill maximizing his revenue:
+  - $11y_c + 7y_p + 5_yf$
+  - for each customer
+  - But there are some constraints, e.g buying one unit of meat  (7
+    EUR) should not be cheaper than buying:
+    - 1 Carbo-pill at $y_c$ EUR
+    - 3 protein-pills at $y_p$ EUR
+    - 5 fat-pills at $y_f$ EUR
+    - $1y_c + 3y_p + 5y_f \leq 7$
+  - equally for tofu, cheese and bread
+    - $2y_c + 2y_p + 0y_f \leq 3$$$
+    - $4y_c + 1y_p + 0y_f \leq 2$
+    - $1y_c + 4y_p + 2y_f \leq 4$
+    - $y_c, y_p, y_f \geq 0$
+  - Exercise verify that this is indeed dual of diet-LP.
 * Exercises
 
 ** Sheet 1
@@ -726,6 +821,16 @@ space.
 
 
 * Footnotes
+
+[fn:23] In the exam almost for sure: Show that the dual of the dual is
+the primal. He wants us to use his standard form definition not
+transformation rules we can find in the internet.
+
+[fn:22] In theory often not interesting (we ignore degenerate
+cases). In practice this is very important.
+
+[fn:21] Exercise: Try to make cyclic example in $\mathbb{R}^2$. Where
+you sit in a corner of mutliple constraints forever.
 
 [fn:20] drawing a correct coordinate system is important (points could
 get deducted). Also you need to be able to read of the solution from
