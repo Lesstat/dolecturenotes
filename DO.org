@@ -760,6 +760,96 @@ space.
     - $1y_c + 4y_p + 2y_f \leq 4$
     - $y_c, y_p, y_f \geq 0$
   - Exercise verify that this is indeed dual of diet-LP.
+** The Dual Simplex Algorithm
+- Figure 1 Primal Simplex
+- Figure 2
+- V-Shape: corener defined by d lin. indep. constrinats which have
+  bounded optimal solution
+- Figure 3
+- Pivoting Step in the dual Simplex
+- Figure 4
+- v is optimal for $\{h_1,h_2\}$ but $v \not\in h_3$
+- for $\{h_1,h_2,h_3\}$ the optimum vertex is 3.
+- start with a corner which is optimal for a subset of constraints
+- As long as there are constraints that are still violated consider
+  them to jump to a "higher" V-Shape
+- Optimum reached once current V-Shape does not violate any other constraints
+*** Characterization of a V-Shape
+- Figure 5 -> V-Shape
+- Figure 6 -> V-Shape
+- Figure 7 -> not a V-Shape
+- A corner (defined by n constraints) is V-Shape iff the objective
+  function vector lies in the cone of the normal vectors of the
+  respective constraints, that is
+- $\exists y \in \matnbb{R}^m, y \geq 0$ with $A^T y = c$
+\begin{align*}
+\text{j-th constraint:} a_{j1}x_1 + a_{j2} x_2 + ... + a_{jn}x_n \geq b_j \\
+\text{has normal vector} (a_{j1}, a_{j2},..., a_{jn})^T
+\end{align*}
+- The Dual Simplex Algorithm jumps from one V-Shape to another V-Shape
+  to another V-Shape,...
+- Each V-Shape corresponds to a (special[fn:26]) solution to
+  $A^Ty=c, y \geq 0$.
+- => can interpret dual simplex algorithm as a sequence of feasible
+  solutions to the dual linear program.
+*** Dual Simplex Algorithm in more detail
+- Consider (primal) LP in standard from an n of its m constraints
+  forming a V-Shape.
+- A V-Shape can be seen as subset B of n constraints such that their
+  unique vertex $x_0$ is at the same time the optimum solution to the
+  reduced LP consisting only of constraints in B.
+- If $x_0$ is feasible for all constraints (also those not in B) we
+  clearly have the optimum solution.
+- If $x_0$ violates some constriant $h_i \not\in B$, that is,
+  $a_{i.}x_o > b_i$, we can use this to derive a next V-Shape by
+  determining the lowest feasible point to the constraint set
+  $B\cup\{h_i\}$. Naively this can be done by considering the $n+1
+  \choose n = n$ subsets of $B\cup\{h_i\}$ of cardinality n, computing
+  their intersection point and checking feasibility.
+- Figure 8
+- $B_{old} = \{h_1,h_2\}, B_{new} = \{h_1,h_3\}$
+- The new V-Shape is the represented by n-1 constraints of the old
+  V-Shape and the previously violated constraints. Dual Simplex
+  algorithm continues until current V-Shape does not violate any
+  constraint.
+- Since (assuming non-degeneracy) every V-Shape is "higher" than the
+  previous one, termination is guaranteed.
+- Existence of a V-Shape at a certain height implies that no lower
+  feasible point exists.
+- A V-Shape whose vertex does not violate any of the other constraints
+  hence has to be optimal.
+- In general note that the constraints $A^Ty =c, y \geq 0$ of the dual
+  linear program can be intrepreted as an invariant of the dual
+  simplex algorithm (always being in a V-Shape).
+- $b^Ty$ expresses the "height" of the current solution/V-Shape since
+  - $y = (A^T_b)^{-1}c$ and hence
+  - $b^Ty = b^T(A^T_B)^-1c = (A_B^{-1}b)^Tc=x'^Tc$
+  - where $A_B$ is the submatrix corresponding to the constraints that
+    define the current V-Shape and x' the intersection point of these
+    constraints.
+*** Pivoting Rules & Degeneracies
+- As in the primal there can be degeneracies which lead to the new
+  V-Shape not being really higher than the old V-Shape. This can
+  happen if the direction of the objective function (primal)
+  coincides with one or more of the normal vectors of the
+  constraints.
+- This might lead to cycling/non-termination of the dual simplex
+  algorithm.
+- Can be fixed with special pivoting rules like Bland's rules in the
+  primal.
+** Properties of Primal & Dual LP
+- Our derivation of the dual LP immediately implies that any feasible
+  solution to the dual is an upper bound on the objective function
+  value of the primal (and vice versa).
+- Figure 9
+- this is called _weak duality_
+- Our intuition of fesaible corners and V-Shapes also immediately
+  yield _strong duality_, that is the optimum primal objective function value
+  _equals_ the optimum dual objective function value.
+- Easy:
+  - Given optimum solution to primal
+  - => derive optimal solution to dual LP
+  - & vice versa
 * Exercises
 
 ** Sheet 1
@@ -819,8 +909,257 @@ space.
   - maximum flow from s to t in G' yields the number of node-disjoint paths in G
   - Figure 3
 
+** Sheet 3
 
+*** Exercise 1
+
+**** a)
+Cost of flow $f^*$
+\begin{array}{rcr}
+  4*2 &= 8& \\
+  0*10 &= 0& \\
+  4*-5 &= -20& \\
+  4*3 &= 12& \\
+  7*11 &= 77& \\
+  0*13 &= 0& \\
+  0*6 &= 0& \\
+  2*-1 &= -2& \\
+  5*5 &= 25& \\
+  0*5 &= 0& \\
+  0*6 &= 0&\\
+  0*5 &= 0& \\
+  \hline
+  &  100&
+\end{array}
+Cost of flow f
+\begin{array}{rcr}
+  2*2 &= 4& \\
+  0*10 &= 0& \\
+  0*-5 &= 0& \\
+  2*3 &= 6& \\
+  3*11 &= 33& \\
+  0*13 &= 0& \\
+  4*6 &= 24& \\
+  2*-1 &= -2& \\
+  7*5 &= 35& \\
+  2*5 &= 10& \\
+  2*6 &= 12&\\
+  0*5 &= 0& \\
+  \hline
+  &  122&
+\end{array}
+- To show that f^* is optimal we need to show that $G_{ f^* }$ does
+  not contain negative cycles.
+- Tut 3_1 [fn:24]
+- $G_{f^*}$ does _not_ contain negative cycles => $f^*$ is an optimal mcf
+
+
+
+**** b)
+- The total cost of f' must be negative as $cost(f^*)< cost(f)$.
+- f' consists of one or more cylces. At least one of those cycles has
+  negative costs. These cycles are also contained in $G_f$
+- Results match our expectations
+
+#+BEGIN_SRC dot :file images/graph9.jpg
+  digraph g{
+          rankdir=LR;
+          {rank = source; a}
+	  {rank = sink; g}
+          {rank = same; b; c}
+          {rank = same; e; f}
+	  a -> b [label="2"]  
+	  a -> c [label="-2"]
+	  b -> d [label="2"]
+	  c -> f [label="-2"]
+	  d -> a [label="0"]
+	  d -> e [label="4"]
+	  d -> g [label="-4"]
+	  f -> d [label="-2"]
+	  e -> b [label="0"]
+	  e -> g [label="4"]
+          g -> f [label="0"]
+  }
+#+END_SRC
+
+#+CAPTION: Difference Flow f'
+#+RESULTS:
+[[file:images/graph9.jpg]]
+
+- Two cylces present
+  - acgdba
+  - degd
+
+
+#+BEGIN_SRC dot :file images/graph10.jpg
+  digraph g{
+          rankdir=LR;
+          {rank = source; a}
+	  {rank = sink; g}
+          {rank = same; b; c}
+          {rank = same; e; f}
+	  a -> b [label="2/2"]  
+	  b -> a [label="2/-2"]  
+	  c -> a [label="2/-5"]
+	  b -> d [label="4/3"]
+	  d -> b [label="2/-3"]
+	  f -> c [label="2/-6"]
+	  d -> a [label="3/13"]
+	  d -> e [label="5/11"]
+	  e -> d [label="3/-11"]
+	  g -> d [label="4/-6"]
+	  f -> d [label="2/5"]
+	  d -> f [label="7/-5"]
+	  e -> b [label="2/10"]
+	  e -> g [label="5/-5"]
+          g -> f [label="6/5"]
+  }
+#+END_SRC
+
+#+CAPTION: Residual network $G_f$
+#+RESULTS:
+[[file:images/graph10.jpg]]
+
+- cost(abdfca) = -11
+- cost(dged) = 0
+- MinCap(abdfca) = 2
+- If we send flow around abdfca we decrease cost by 22.
+
+*** Exercise 2 
+- Tut 3_2
+
+*** Exercise 3
+
+#+BEGIN_SRC dot :file images/graph11.jpg
+  digraph g{
+	  rankdir=LR;
+	  a_1 -> b_2 [label="1/2"]
+	  a_1 -> c_2 [label="1/2"] 
+	  b_1 -> d_2 [label="1/3"]
+	  b_1 -> c_2 [label="6/10"]
+	  c_1 -> b_2 [label="2/-10"]
+	  c_1 -> d_2 [label="5/1"]
+	  c_1 -> a_2 [label="1/-2"]
+	  d_1 -> b_2 [label="2/-3"]
+	  a_2 -> b_3 [label="1/2"]
+	  a_2 -> c_3 [label="1/2"] 
+	  b_2 -> d_3 [label="1/3"]
+	  b_2 -> c_3 [label="6/10"]
+	  c_2 -> b_3 [label="2/-10"]
+	  c_2 -> d_3 [label="5/1"]
+	  c_2 -> a_3 [label="1/-2"]
+	  d_2 -> b_3 [label="2/-3"]
+	  a_3 -> b_4 [label="1/2"]
+	  a_3 -> c_4 [label="1/2"] 
+	  b_3 -> d_4 [label="1/3"]
+	  b_3 -> c_4 [label="6/10"]
+	  c_3 -> b_4 [label="2/-10"]
+	  c_3 -> d_4 [label="5/1"]
+	  c_3 -> a_4 [label="1/-2"]
+	  d_3 -> b_4 [label="2/-3"]
+  }
+#+END_SRC
+
+#+RESULTS:
+[[file:images/graph11.jpg]]
+- Tut 3_3
+- There is a circle starting in A with negative costs
+
+*** Exercise 4
+
+**** a)
+1) What variables do we need?
+   - $\forall (u,v) \in E :$ introduce a variable $f_{uv}$ that models
+     f((u,v))
+2) What objective do we need?
+   - Decrease cost of our flow
+   - $$\min \sum_{e=(u,v) \in E} cost(e)*f_{uv}$$
+3) Constraints
+   - Capacity constraints: -> Capacity Conservation
+     - j$\forall e=(u,v) \ in E: f_{uv} \leq cap(e)$
+     - $f_{uv} \geq 0$
+   - vertex constraints: -> flow conservation
+     - $$\forall v \in V: \sum_{\forall e=(., v)}f_{.v} + b(v) =
+       \sum_{\forall e =(v,.)} f_{v.}$$
+\begin{align*}
+ \min &2f_{ab} + 2f_{ac} + 10f_{bc} + 3f_{bd} + 1f_{cd} \\
+  \text{st}
+      & f_{ab} \leq 4&  f_{ab} &\geq 0 \\
+      & f_{ab} \leq 4&  f_{ab} &\geq 0 \\
+      & f_{ac} \leq 2&  f_{ac} &\geq 0 \\
+      & f_{bc} \leq 8&  f_{bc} &\geq 0 \\
+      & f_{bd} \leq 3&  f_{bd} &\geq 0 \\
+      & f_{cd} \leq 5&  f_{cd} &\geq 0 \\
+\end{align*}
+\begin{align*}
+  4 &= f_{ab} +f_{ac} \\
+  f_{ab} + 1 &= f_{bc} + f_{bd} \\
+  f_{ac} +f_{bc} -3 &= f_{cd} \\
+  f_{bd} +f_{ce} -2 &= 0 \\
+\end{align*}
+
+**** b)
+No it is not in the standard form we learned, as it does not only
+consist of less or equals  constraints and it is a minimization
+problem instead of a maximization.
+
+- Transform to standard form:
+- make the objective a max.
+  - $\min c^T x <=> \max -c^Tx$
+#+begin_export latex
+\begin{align*}
+ \max &-2f_{ab} - 2f_{ac} - 10f_{bc} - 3f_{bd} - 1f_{cd} \\
+\end{align*}
+#+end_export
+- transform constraints into '$\leq$'if constraint is $\geq 0$ then
+  multiply with -1.
+- if constraint '=', then split into two constraints '$\leq$' and '$\geq$'.
+\begin{align*}
+      & f_{ab} \leq 4&  -f_{ab} &\leq 0 \\
+      & f_{ab} \leq 4&  -f_{ab} &\leq 0 \\
+      & f_{ac} \leq 2&  -f_{ac} &\leq 0 \\
+      & f_{bc} \leq 8&  -f_{bc} &\leq 0 \\
+      & f_{bd} \leq 3&  -f_{bd} &\leq 0 \\
+      & f_{cd} \leq 5&  -f_{cd} &\leq 0 \\
+\end{align*}
+\begin{align*}
+  4 &= f_{ab} +f_{ac} \\
+  f_{ab} + 1 &= f_{bc} + f_{bd} \\
+  f_{ac} +f_{bc} -3 &= f_{cd} \\
+  f_{bd} +f_{ce} -2 &= 0 \\
+\end{align*}
+
+**** c)
+- Tut3_4c
+
+*** Exercise 5
+\begin{align*}
+\max c^Tx  \\
+\text{ s.t. }  Ax \leq b
+\end{align*}
+- feasible region is bounded and convex[fn:25] 
+- => $\forall p \in P:$ p is a convex combination of corner vertices
+  x_1,...x_t of P.
+- Consider $x^*$ is optimal.
+- $$x^* = \sum_{i=1}^{t} \lambda_i x_i$$ , $\lambda_i \geq 0$,
+  $$\sum_{i=1}^{t} \lambda_i = 1$$
+- $$c^T x^* = c^T \sum_{i=1}^{t} \lambda_i x_i$$
+- <=> $$0 = c^T \sum \lambda_i x_i - c^T x^*$$
+- $$0 = c^T(\sum \lambda_i x_i - x^*)$$
+  - $$\sum \lambda_i = 1$$
+- <=> $$ 0 = c^T (\sum \lambda_i (x_i - x^*))$$
+- <=> $$0= \sum \lambda_i (c^Tx_i - c^Tx^*)$$ (Satz vom Nullprodukt)
+- $\exists \lambda_i \not= 0$ => $\exists x_i: c^Tx_i = c^Tx^*$
 * Footnotes
+
+[fn:26] $\leq n$ non-zero components (of the constraints defining V-Shape)
+
+[fn:25] Definition of convex: $\forall p \not= q \in P$ where P is
+convex. $p + \alpha* \overarrow{pq}$  with $0 \leq \alpha  \leq 1$ is
+also in P. Every Point on the line from p to q is also in P.
+ 
+[fn:24] In the exam its sufficient to draw the residual network and
+state that there are no negative cycles.
 
 [fn:23] In the exam almost for sure: Show that the dual of the dual is
 the primal. He wants us to use his standard form definition not
