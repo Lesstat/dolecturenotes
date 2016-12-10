@@ -665,7 +665,85 @@ space.
   by exactly n constraints)
 - There are only finitely many  < $ m \choose n$ corners and we
   never visit one twice.
-*** Pivoting rules
+- ... unknown content
+\begin{equation*}
+  \begin{pmatrix}
+   a_{11} \dots a_{1d}  \\
+   \vdots  \ddots \vdots \\
+   a_{d1} \dots a_{dd} \\
+  \end{pmatrix}
+  \begin{pmatrix}
+    x_1 \\
+    \vdots \\
+    x_d
+  \end{pmatrix}
+  +
+  \begin{pmatrix}
+    s_1 \\
+    \vdots \\
+    s_d
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+    b_1 \\
+    \vdots \\
+    b_d
+  \end{pmatrix}
+\end{equation*}
+with $s_i \geq 0$
+- In short we write $A_B x + S =b_B$
+- The coordinates of the current certex v are determined
+  $x=A_bb_B-A_BS$
+- Move away from vertex v on a ray bounding the feasible region
+  corresponds to increasing one of the slack variables to a non-zero
+  value while keeping the others zero.
+- We want to see which slack variable is worth increasing <=> which
+  constraint is worth moving away from to improe the objective
+  function value.
+\begin{align*}
+\underbrace{ c^Tx }_{\substack{ \text{objective value of point x } \\ \text{ moving along one of the rays  }}}  &= c^T (A_B^{-1}b_B - A_B^{-1}s)\\
+& = c^T\underbrace{x'}_{\substack{\text{coordinates of vertex} \\ \text{I was sitting on (hence x')}}} - 
+\underbrace{\alpha_1s_1 - \alpha_2s_2 - ... \alpha_d s_d }_{-c^TA_Bs?}
+\end{align*}
+- => Expressed dependence on s. The objective function value is a
+ constant (the obj. func. value at vertx v) and a weighted sum of the
+ $s_i$ with weights $(\alpha_1,... \alpha_d)$.
+- For each i with $\alpha_i < 0$, moving away from the respective
+  constraint (=> increasing $s_i$) improves the objective function value.
+- If no such i exists no neighboring corner can be better => optimium reached.
+- Now assume we have a constraint $a_i^Tv \leq b_i$ which we want to
+  move away from (this constraint leaves the basis). We need to finde
+  the new constraint entering the basis, that is, the constriant that
+  is violated when moving along the ray.
+- $x' = A_B^{-1}b_B$ is the current/old vertex we want to move a way from.
+- $$x'' = A^{-1}b_B - \underbrace{ (A_B^{-1})_{ .i } }_{ \text{ith column of $A_B^{-1}$}}$$
+- We can express the improving ray as
+  $\vec{r}=x'+\lambda(x''-x')=x'-\lambda(A_B^{-1})_{.i}$
+- we are .. in the constraint violated when increasing \lambda (=
+  moving along the ray), so for every constriant l we can do the
+  following: $a_l^T(x'-\lambda(A^{-1}_B)_{.i}) \leq b_l$
+- and check when this inequality is fulfilled with equality
+- <=> $a_l^Tx' - \lambda a^T (A^{-1}_B)_{.i} < b_l$
+- if $a_l^T (A^{-1}_B)_{.i} \geq 0$ this constraint will never be
+  violated, otherwise
+- $$\lambda \leq \frac{b_l - a_l^Tx'}{-a_l^T  (A^{-1}_B)_{.i}}$$
+- The constraint which yields the smallest upper bound on $\lambda$ is
+  the new constraint entering the basis.
+*** Pivoting Strategies
+- Often there are several rays moving along improving the objective
+  function value
+- Natural Strategies:
+  - Choose the steepest ray which improves the objective function
+    value at the highest rate (cheap to figure out)
+  - Choose the ray whose other vertex has the best objective function
+    value (expensive as it requires all other neighbouring vertices on
+    improving ray, but might make more progress)
+- Theoretically no really good pivoting strategy is known, for many
+  used strategies bad examples are known (e.g. Klee-Morty, Cube?)
+[[file:images/Fig_25_edited.jpg]]
+[[file:images/Fig_26_edited.jpg]]
+- There is a randomized strategy with sub-exponential (not polynomial)
+  running time.
 - Pivoting rules are also important to deal with degenerate configurations
 - Figure 1[fn:21]
 - In higher dimensions it can happen, that one keeps sitting in the
@@ -909,6 +987,98 @@ space.
   - maximum flow from s to t in G' yields the number of node-disjoint paths in G
   - Figure 3
 
+** Sheet 2
+*** Problem 1
+**** a ) 
+\begin{algorithmic}
+\WHILE{$D \ge 1$}
+\STATE $G_f^D \leftarrow$ residual network of $G$ restricted to edges of capacity $\ge D$ \textit{using P1/P2}
+\WHILE{$\exists s-t$ path in $G_f^D$}
+\STATE augment path
+\STATE $G_f^D \leftarrow$ residual network with regard to $f$
+\ENDWHILE
+\STATE $D = \frac{D}{2}$
+\ENDWHILE
+\end{algorithmic}
+Algorithm gives a running time $O(\log(\mbox{capa}_{\text{max}}) \cdot m \cdot (m+n))$.
+
+Output of both procedures might differ:
+[[file:images/Tutblatt_2_0001.jpg]]
+**** b)
+Within the inner loop edges with capacity $< D$ might occur.\\
+$\Rightarrow$ it's possible to get a subgraph like this in the residual network $G_f^D$ and the running time analysis does not apply: 
+[[file:images/Tutblatt_2_0002.jpg]]
+[[file:images/Tutblatt_2_0003.jpg]]
+
+Proof idea for capacity scaling running time starting the outer loop we know:
+\begin{itemize}
+\item all edges in $G_f^D$ have capacity of $\le 2D$ $s-t$ path
+\item there are at most $m$ such paths
+\item in each inner loop we augment by at least $D$
+\end{itemize}
+$\Rightarrow$ at most $2m$ iterations of the inner loop 
+
+Running time of the capacity scaling algorithm is
+ \[
+O(\underbrace{\log(C_\text{max})}_{\text{\#outer loop iterations}} \cdot \underbrace{2m}_{\text{\#inner loop iterations}} \cdot \underbrace{(m+n)}_{\text{\#compute $G_f^D$, find $st$-path, augment}})
+\]
+
+\begin{enumerate}
+\item Iteration 1 of the outer loops\\
+$\Rightarrow 2D > \mbox{capa}(e) ~~~ \forall e\in E$\\
+$D$ is the next smaller power of 2.
+\item Iteration $i$
+$\Rightarrow$ In Iteration $i-2$ $D^{i-1}$ was $2D^i$
+\begin{itemize}
+\item there is no more $s-t$ path in iteration $i-1$
+\item every $s-t$ path in iteration $i$ have a max bottleneck capacity of $D^i = \frac{D^{i-1}}{2}$
+\item there are at most $m$ $s-t$ paths $\Rightarrow$ max capacity in iteration $i$: $m\cdot 2D$
+\end{itemize}
+\end{enumerate}
+
+*** Problem 2 
+**** a)
+Given a MinCost flow instance
+\begin{align*}
+G(V,E)\\
+\mbox{capa}: E &\rightarrow \mathbb{N}\\
+\mbox{cost}: E &\rightarrow \mathbb{Z}\\
+b: V &\rightarrow \mathbb{Z}
+\intertext{Construct a FF-instance:}
+V' &= V \cup \{ s,t \} \\
+E' &= E \cup \{ (s,v) | v \in V: b(v) > 0\} \\
+&\cup \{ (v,t) | v \in V : b(v) < 0 \}\\
+\mbox{capa}'(e) &= \begin{cases} \mbox{capa}(e) & \text{if} e\in E \\
+b(v) & \text{if } b(v) > 0 \\
+-b(u) & \text{if} b(u) < 0 \end{cases}
+\end{align*}
+[[file:images/Tutblatt_2_0004.jpg]]
+
+\begin{itemize}
+\item Solve max flow for $G'(V', E')$ and capa' with start node $s$ and target node $t$
+\item use the computed max flow as initial flow for the cycle cancelling algorithm
+\end{itemize}
+
+**** b)
+[[file:images/Tutblatt_2_0005.jpg]]
+
+*** Problem 3
+[[file:images/Tutblatt_2_0006.jpg]]
+
+*** Problem 4
+**** a) 
+[[file:images/Tutblatt_2_0007.jpg]]
+
+**** b)
+- Introduce super supply $s$ and super demand $d$
+- add edges from $s$ to every node $v$ with $b(v) > 0$\\
+define cost$=0$, capa=$b(v)$ for the added edges
+- add edges from $v$ to $t$ for every node $v$ with $b(v)<0$\\
+define cost$=0$, capa$=-b(v)$ for the added edges\\
+
+[[file:images/Tutblatt_2_0008.jpg]]
+Let $b(d) = \min( \sum_{v: b(v)>0} b(v) ; \sum_{v:b(v)<0} b(v) )$\\
+$b(s) = - b(d)$
 ** Sheet 3
 
 *** Exercise 1
