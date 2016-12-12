@@ -366,7 +366,7 @@ Given a directed network G(V,E) witch capacities $cap: E \rightarrow
 surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
 - $$\sum_{v:b(v)>0}b(v) = - \sum_{v:b(v)<0} b(v)$$
 - we want to find a flow $f: E \rightarrow \mathbb{N}$ such that
-  - $\forall e \in E:  o \leq f(e) \leq cap(e)$ "capacity constraint"
+  - $\forall e \in E:  0 \leq f(e) \leq cap(e)$ "capacity constraint"
   - $$\forall v \in V: b(v) + \sum_{e=(w,v)}f(e) = \sum_{e=(v,w)}f(e)$$
     "flow conservation constraint"
   - and minimizing $$\sum_{e\in E}f(e)*cost(e)$$
@@ -428,8 +428,8 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   - This cycle is also a negative cost cycle in $G_f$
   - this is a contradiction
 *** Problem to solve
-- Given a directed weighted graph G(V,E,c) with edge costs $c : E
-  \rightarrow \mathbb{Z}$ find a negative cycle.
+- Given a directed weighted graph G(V,E,c) with edge costs
+  $c:E\rightarrow \mathbb{Z}$ find a negative cycle.
 - Idea to find negative cycles:
   - Create n+1 copies of the V
  [[file:images/Fig_14_edited.jpg]]
@@ -536,8 +536,8 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
 - Theorem
   - Let G(V,E,c) be a directed weighted graph with possibly negative
     edge costs but without negative cycles. Then there exists a
-    potential function $\phi V -> \mathbb{Z}$ such that the shifted
-    edge consts:
+    potential function $\phi: V -> \mathbb{Z}$ such that the shifted
+    edge costs:
     - $c'(v,w) = c(v,w) + \phi(v)  \phi(w)$
     - are all non-negative and shortest paths in G(V,E,c) remain
       shortest in G(V,E,c') and vice versa.
@@ -550,7 +550,6 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   - Then define $\phi(v) = d_s(v)$.
   - First observe that due to d_s() being shortest path distances we
     have
-  - Figure 9
   - $d_s(w) \leq d_s(v) + c(v,w)$ for every edge (v,w)
   - => $c'(v,w) = c(v,w) + \phi(v) - \phi(w)$
   - $= c(v,w) + d_s(v) - d_s(w)$
@@ -573,7 +572,7 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   argue again as before.
 
 * Linear Programming
-- Example in \mathbb{R}^2
+- Example in $\mathbb{R}^2$
   - LP is equivalent to "looking for the 'best' point satisfying some constraint"
 [[file:images/Fig_20_edited.jpg]] 
 - Example: Cheap and ''healthy'' diet
