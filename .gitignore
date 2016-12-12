@@ -2,7 +2,7 @@
 /Tim/*
 *.pdf
 /ltxpng/*
-/images/*
+/images/graph*.jpg
 *.bbl
 *.tex
 *.gz
