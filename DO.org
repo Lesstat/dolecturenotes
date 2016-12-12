@@ -345,10 +345,10 @@ inner loop, the flow grow by at least D/2.
     most m steps the length of the shortest path from s to t is increased.
 
 ** MinCostFlow (Better MinCostMaxFlow Problem)
-- Figure 1
+[[file:images/Fig_08_edited.jpg]]
 - Every node can either be a source or a sink
 - Example
-  - Figure 2
+[[file:images/Fig_09_edited.jpg]]
   - is a valid flow as:
     - on every edge we do not exceed the capacity constraint
       - $\forall e \in G: f(e) \leq cap(e)$
@@ -391,13 +391,14 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
     - $cost(e'') = - cost(e)$
 - Example
   - *Exersice* use cycle acdba instead and cont cycle cancelling until termination
-  - Figure 3
+[[file:images/Fig_10_edited.jpg]]
+
   - There is a negative cycle acba of cost -10.
   - For every unit of flow sent across that cycle the total cost
     decreases by 10
   - We can send up to 1 unit of flow around (due to bottleneck edge ac)
   - resulting flow and residual network, which contains no negative cycle
-  - Figure 4
+[[file:images/Fig_11_edited.jpg]]
   - Alg. finishes  [fn:10]
 - Algorithm is also called "cycle cancelling" algorithm as once flow
   is sent across negative cycle, it will not be present in the next
@@ -419,9 +420,9 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   - Clearly, cost(f')< 0 since $cost(f^*)< cost(f)$
   - Furthermore f' must satisfy flow conservation (inflow = outflow),
     that is at any v, the outflow of f' must equal the inflow of f'.
-  - Figure 5
+ [[file:images/Fig_12_edited.jpg]]
   - Hence f' can be decomposed into a set of cycles
-  - Figure 6
+ [[file:images/Fig_13_edited.jpg]]
   - Since the total cost of the cycles is negative, one of the cycles
     must have negative cost.
   - This cycle is also a negative cost cycle in $G_f$
@@ -431,7 +432,7 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   \rightarrow \mathbb{Z}$ find a negative cycle.
 - Idea to find negative cycles:
   - Create n+1 copies of the V
-  - Figure 1
+ [[file:images/Fig_14_edited.jpg]]
   - Connect node v in layer (i) with node w in layer (i+1) iff [fn:11]
     $(v,w) \in E$ (same costs)
   - Then $\forall v_i$ compute shortest path distances from $v_i^{(1)}$
@@ -459,13 +460,13 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   - every job is done
   - no worker performs more than one job
   - no worker performs a job he is not qualified for
-  - Figure 2
+ [[file:images/Fig_15_edited.jpg]]
 - Extension with costs
   - worker w performing job j incurs cost of c(w,j)
   - Goal: Find assignment of jobs to works minimizing total cost.
   - add costs c(w,j) to edge e=(w,j). Use min-Cost-Flow
 - Heiratssatz (not relevant for Exam)
-  - Figure 3
+ [[file:images/Fig_16_edited.jpg]]
   - Q: Is there an assignment of men to women such that everyone is
     married (without fighting)
   - Hall's Theorem:
@@ -483,7 +484,7 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   - $f_{ij}$ for that
   - the plane has p seats.
 - which passengers should be picked up to maximize the revenue?
-- Figure 4
+ [[file:images/Fig_17_edited.jpg]]
 - e.g:
   - 2 from $v_1$ -> $v_3$ => 6 €
   - +    1 for $v_2$ -> $v_4$ => 4 €
@@ -491,7 +492,6 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   - OR
   - 3 from $v_2$ -> $v_4$ => 12€
 - Modelling as MinCostFlow Problem
-- Figure 5
 - Nodes i,j represents passengers who want to go from i to j. [fn:14]
 *** Alternative Approach to MinCostFlow (via successive shortest path)
 - Recall the Cycle Cancelling Flow Approach
@@ -506,7 +506,7 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
     Ford-Fulkersion (!)
   - where in each round we choose as augmenting path the cheapest path
     in the residual network connecting a supply node with a demand node.
-  - Figure 7
+[[file:images/Fig_18_edited.jpg]]
   - Such a path can be found via a shortest path computation on a
     slightly enhanced residual network (see picture above)
   - Bellman-Ford can be used for that
@@ -520,7 +520,8 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   - Decompose C into $C_1$ and $C_2$ where $C_1$ starts and ends with
     negative cost edges and $C_2$ only contains edges with
     non-negative costs
-  - Figure 8 Red edges have negative cost
+[[file:images/Fig_19_edited.jpg]]
+  - Red edges have negative cost
   - $cost(C_1)$ < 0 and $|cost(C_1)|$ > $cost(C_2)$
   - For simplification assume that C_1 consists solely of negative
     cost edges which also form a continuous reverse subpath of the first
@@ -574,7 +575,7 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
 * Linear Programming
 - Example in \mathbb{R}^2
   - LP is equivalent to "looking for the 'best' point satisfying some constraint"
-  - Figure 10
+[[file:images/Fig_20_edited.jpg]] 
 - Example: Cheap and ''healthy'' diet
   - Healthy life means
     - at least 11 units of carbohydrates
@@ -628,20 +629,20 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
 space. 
 - A polyhedron is an intersection of halfspaces
   - in $\mathbb{R}^2$: halfspace ^= halfplane
-  - Figure 11 [fn:19]
+[[file:images/Fig_27_edited.jpg]] [fn:19]
   - $\max x +y$
   - $-x -y \leq -3$ (orange)
   - $ 0.5x +y \leq 7$ (green)
   - $ 0.5x -y \leq 0$ (red)
   - $ -0.5x +y \leq 3$ (black)
   - Feasible Region in red
-  - Figure 12 [fn:20]
+[[file:images/Fig_28_edited.jpg]] [fn:20]
 - Remarks
   - The feasible region defined by an LP can be empty
-  - Figure 13
+[[file:images/Fig_29_edited.jpg]]
   - The feasible region might also be unbounded (as well as the
     optimal solution)
-  - Figure 14
+[[file:images/Fig_30_edited.jpg]]
 - Lemma
   - If the feasible region is a bounded, non-empty polyhedron, the
     maximum objective function value is (also) obtained at a corner
@@ -652,11 +653,11 @@ space.
   - Intersection of n linearly independent constraints ( their
     respective bounding hyperplane)
   - in $\mathbb{R}^2$
-  - Figure 15
+[[file:images/Fig_31_edited.jpg]]
 ** The (primal) Simplex Algorithm
 - Assume that C = (0,0,...,-1) that is, we are always looking for the
   ''lowest'' feasible point.
-- Figure 16
+[[file:images/Fig_32_edited.jpg]]
 - Except for dimensions 1,2,3 it is very inefficient to just compute
   the feasible reason explicitly and inspect all corners.
 - In general, a polyhedron in dimension n defined by m halfspaces can
@@ -745,7 +746,7 @@ with $s_i \geq 0$
 - There is a randomized strategy with sub-exponential (not polynomial)
   running time.
 - Pivoting rules are also important to deal with degenerate configurations
-- Figure 1[fn:21]
+[[file:images/Fig_34_edited.jpg]] [fn:21]
 - In higher dimensions it can happen, that one keeps sitting in the
   same corner only exchanging the constraints of basis -> no termination!
 - _Remedy_ there is a special pivoting rule called Bland's rule
@@ -839,13 +840,13 @@ with $s_i \geq 0$
     - $y_c, y_p, y_f \geq 0$
   - Exercise verify that this is indeed dual of diet-LP.
 ** The Dual Simplex Algorithm
-- Figure 1 Primal Simplex
-- Figure 2
+[[file:images/Fig_35_edited.jpg]] Primal Simplex
+[[file:images/Fig_36_edited.jpg]]
 - V-Shape: corener defined by d lin. indep. constrinats which have
   bounded optimal solution
-- Figure 3
+[[file:images/Fig_37_edited.jpg]]
 - Pivoting Step in the dual Simplex
-- Figure 4
+[[file:images/Fig_38_edited.jpg]]
 - v is optimal for $\{h_1,h_2\}$ but $v \not\in h_3$
 - for $\{h_1,h_2,h_3\}$ the optimum vertex is 3.
 - start with a corner which is optimal for a subset of constraints
@@ -853,9 +854,9 @@ with $s_i \geq 0$
   them to jump to a "higher" V-Shape
 - Optimum reached once current V-Shape does not violate any other constraints
 *** Characterization of a V-Shape
-- Figure 5 -> V-Shape
-- Figure 6 -> V-Shape
-- Figure 7 -> not a V-Shape
+- [[file:images/Fig_39_edited.jpg]] -> V-Shape
+- [[file:images/Fig_40_edited.jpg]] -> V-Shape
+- [[file:images/Fig_41_edited.jpg]] -> not a V-Shape
 - A corner (defined by n constraints) is V-Shape iff the objective
   function vector lies in the cone of the normal vectors of the
   respective constraints, that is
@@ -884,7 +885,7 @@ with $s_i \geq 0$
   $B\cup\{h_i\}$. Naively this can be done by considering the $n+1
   \choose n = n$ subsets of $B\cup\{h_i\}$ of cardinality n, computing
   their intersection point and checking feasibility.
-- Figure 8
+[[file:images/Fig_42_edited.jpg]]
 - $B_{old} = \{h_1,h_2\}, B_{new} = \{h_1,h_3\}$
 - The new V-Shape is the represented by n-1 constraints of the old
   V-Shape and the previously violated constraints. Dual Simplex
@@ -919,7 +920,7 @@ with $s_i \geq 0$
 - Our derivation of the dual LP immediately implies that any feasible
   solution to the dual is an upper bound on the objective function
   value of the primal (and vice versa).
-- Figure 9
+[[file:images/Fig_43_edited.jpg]]
 - this is called _weak duality_
 - Our intuition of fesaible corners and V-Shapes also immediately
   yield _strong duality_, that is the optimum primal objective function value
@@ -967,7 +968,7 @@ with $s_i \geq 0$
     - set of students S $|S| = n$
     - set of traineeships T $|T| = m$
     - $ m \geq n$
-    - Figure 1
+[[file:images/Fig_05_edited.jpg]]
     - $cap(e) = 1 \forall e \in E$
     - if max flow = n $\rightarrow$ there is a valid assignment of
       students to traineeships
@@ -976,7 +977,7 @@ with $s_i \geq 0$
       - $\forall e=(v,u), v \in S, u \in T$ if f(e) = 1
       - student v is assigned to traineeship u
 - b):
-  - Figure 2
+  [[file:images/Fig_06_edited.jpg]]
   - Given directed G(V,E)
   - construct G'(V',E')
   - $\forall v \in V\backslash\{s,t\}$ introduce $v',v'' \in V'$
@@ -985,7 +986,7 @@ with $s_i \geq 0$
   - $\forall e=(v,u) \in E$ introduce $(v'',u') \in E'$
   - assign cap=1 to every Edge
   - maximum flow from s to t in G' yields the number of node-disjoint paths in G
-  - Figure 3
+ [[file:images/Fig_07_edited.jpg]]
 
 ** Sheet 2
 *** Problem 1
