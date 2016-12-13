@@ -386,7 +386,7 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   - if f(e) < cap(e) then there is an edge $e' = (v,w) \in E_f$ with
     - cost $cost(e')= cost(e)$ and
     - $cap(e') = cap(e) - f(e)$
-  - if f(e)>0 then there is a virtual edge $e'' =(v,w)\in E_f$ with
+  - if f(e)>0 then there is a virtual edge $e'' =(w,v)\in E_f$ with
     - $cap(e'') = f(e)$ and
     - $cost(e'') = - cost(e)$
 - Example
@@ -719,7 +719,7 @@ with $s_i \geq 0$
 - $$x'' = A^{-1}b_B - \underbrace{ (A_B^{-1})_{ .i } }_{ \text{ith column of $A_B^{-1}$}}$$
 - We can express the improving ray as
   $\vec{r}=x'+\lambda(x''-x')=x'-\lambda(A_B^{-1})_{.i}$
-- we are .. in the constraint violated when increasing \lambda (=
+- we are .. in the constraint violated when increasing $\lambda$ (=
   moving along the ray), so for every constriant l we can do the
   following: $a_l^T(x'-\lambda(A^{-1}_B)_{.i}) \leq b_l$
 - and check when this inequality is fulfilled with equality
@@ -841,7 +841,7 @@ with $s_i \geq 0$
 ** The Dual Simplex Algorithm
 [[file:images/Fig_35_edited.jpg]] Primal Simplex
 [[file:images/Fig_36_edited.jpg]]
-- V-Shape: corener defined by d lin. indep. constrinats which have
+- V-Shape: corner defined by d lin. indep. constraints which have
   bounded optimal solution
 [[file:images/Fig_37_edited.jpg]]
 - Pivoting Step in the dual Simplex
@@ -881,9 +881,9 @@ with $s_i \geq 0$
 - If $x_0$ violates some constriant $h_i \not\in B$, that is,
   $a_{i.}x_o > b_i$, we can use this to derive a next V-Shape by
   determining the lowest feasible point to the constraint set
-  $B\cup\{h_i\}$. Naively this can be done by considering the $n+1
-  \choose n = n$ subsets of $B\cup\{h_i\}$ of cardinality n, computing
-  their intersection point and checking feasibility.
+  $B\cup\{h_i\}$. Naively this can be done by considering the
+  $n+1\choose n = n$ subsets of $B\cup\{h_i\}$ of cardinality n,
+  computing their intersection point and checking feasibility.
 [[file:images/Fig_42_edited.jpg]]
 - $B_{old} = \{h_1,h_2\}, B_{new} = \{h_1,h_3\}$
 - The new V-Shape is the represented by n-1 constraints of the old
