@@ -928,6 +928,80 @@ with $s_i \geq 0$
   - Given optimum solution to primal
   - => derive optimal solution to dual LP
   - & vice versa
+** Interpretation of the dual Simplex Algorithm as Primal Simplex Algorithm on the dual LP
+- Primal LP
+\begin{align*}
+\max &( c_1x_1 +c_2x_2 + ... + c_n x_n  )\\
+\text{s.t.} &a_{11}x_1 + a_{12}x_2 +... a_{1n}x_n \leq b_1 \\
+\vdots
+ &a_{m1}x_1 + a_{m2}x_2 +... a_{mn}x_n \leq b_m \\
+\end{align*}
+- Dual LP
+\begin{align*}
+\min &( b_1x_1 +b_2x_2 + ... + b_m x_m  )\\
+\teyt{s.t.} &a_{11}y_1 + a_{21}y_2 +... a_{n1}y_m = c_1 \\
+\vdots
+ &a_{1m}y_1 + a_{2m}y_2 +... a_{nm}y_m = c_m \\
+&y_i \geq 0
+\end{align*}
+- typically m >> n
+- We can bring the dial LP into Standard form by creation for each "="
+  constriants on "$\geq$" and one "$\leq$"constraint and the
+  multiplying wit -1 if necessary.
+- before: DLP had n+m constraints
+- after: DLP has 2n+m constraints in dimension m.
+- If we run primal Simplex algorithm on this LP in standard form, a
+  corner is always represented by m linearly independent constraints
+  fulfilled with equality.
+- Note that n of these tight constraints are always formed by
+  constraints from the set of 2n constraints derived from the
+  equalities in the dual LP.
+- A corner is hence defined by at most n constraints from the group of 2n
+  constraints and $ \geq m-n$ from the ($y_i \geq 0$) group
+- => There are at most n of the $y_i \geq 0$ constraints not fulfilled
+  with equality (that is $y_i > 0$).
+- These $\leq n$ non-negative $y_i$ select and combine as a conic
+  combination $\leq n$ constraints whose weighted normal vectors add
+  up to the objective function.
+- Or: the objective function vector $\vec{C}$ is always in cone of the
+  constraints selected by non-zero $y_i$'s;
+- The respective objective function value of the vertex hence yields
+  an upper bound on the objective function value in the primal.
+- A pivot step in the (primal) Simplex Algorithm on the dual LP can be
+  interpreted as identifying a constraint in the primal space
+  violating the current V-Shape and replacing one current constraint
+  by violating constraint. [fn:27]
+*** Another explanation
+- A corner is defined by m lin. indep. constraints fulfilled with equality
+- from the group of 2n constraints a basis of a corner get at most n
+  of them (due to linear independence requirement)
+- => a corner needs $\geq m-n$ tight constraints from the group of
+  ($y_i \geq 0$) constraints
+- => at least m-n of the $y_i$ have to be zero
+- => at most n of the $y_i$ can be non-zero.
+** Properties of  Primal and Dual LP
+- Primal (P)
+\begin{align*}
+\max c^Tx \\
+Ax \leq b
+\end{align*}
+- Dual (D)
+\begin{align*}
+\min b^Ty \\
+A^Ty =c \\
+y_i \geq 0
+\end{align*}
+- Weak duality: $\forall$ feasible x' for (P) and feasible y' for (D)
+  $c^Tx'\leq b^Ty'$
+- Strong duality: Let $x^*$ be an optimal solution to (P) and $y^*$ an
+  optimal solution to (D) $c^Tx^*=b^Ty^*$
+\begin{align*}
+\max 5x + 7y \\
+x +y \leq 7 \\
+x- y \geq 5 \\
+x,y \in \mathbb{N}
+\end{align*}
+- Figure 1
 * Exercises
 
 ** Sheet 1
@@ -1321,6 +1395,8 @@ problem instead of a maximization.
 - <=> $$0= \sum \lambda_i (c^Tx_i - c^Tx^*)$$ (Satz vom Nullprodukt)
 - $\exists \lambda_i \not= 0$ => $\exists x_i: c^Tx_i = c^Tx^*$
 * Footnotes
+
+[fn:27] Unlikely that this proof will be asked in the exam.
 
 [fn:26] $\leq n$ non-zero components (of the constraints defining V-Shape)
 
