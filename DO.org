@@ -538,7 +538,7 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
     edge costs but without negative cycles. Then there exists a
     potential function $\phi: V -> \mathbb{Z}$ such that the shifted
     edge costs:
-    - $c'(v,w) = c(v,w) + \phi(v)  \phi(w)$
+    - $c'(v,w) = c(v,w) + \phi(v) - \phi(w)$
     - are all non-negative and shortest paths in G(V,E,c) remain
       shortest in G(V,E,c') and vice versa.
 - Proof: 
@@ -1001,7 +1001,8 @@ x +y \leq 7 \\
 x- y \geq 5 \\
 x,y \in \mathbb{N}
 \end{align*}
-- Figure 1
+[[file:images/Fig_44_edited.jpg]]
+[[file:images/Fig_45_edited.jpg]]
 * Exercises
 
 ** Sheet 1
@@ -1394,6 +1395,126 @@ problem instead of a maximization.
 - <=> $$ 0 = c^T (\sum \lambda_i (x_i - x^*))$$
 - <=> $$0= \sum \lambda_i (c^Tx_i - c^Tx^*)$$ (Satz vom Nullprodukt)
 - $\exists \lambda_i \not= 0$ => $\exists x_i: c^Tx_i = c^Tx^*$
+** Sheet 4
+*** Exersice 1
+**** Part 1
+Assume LP P is in standard form 
+\begin{align*}
+\max c^Tx \\
+Ax \leq b
+\end{align*}
+assume $b \geq 0$
+Find an inital corner of the feasible region.
+Construct auxiliary LP $P_A$
+- introduce variables $\lambda_i$ for every constraint in the original
+  problem P
+\begin{align*}
+\min \sum \lambda \\
+\text{ s.t. } Ax+ \lambda \leq b\\
+\lambda \geq 0
+\end{align*}
+- A corner of the auxiliary problem is at x = 0 and $\lambda = b$
+- Figure out a solution (corner) of P:
+- solve auxiliary Problem using Simplex and the given starting
+  position.
+- obj. Function value of $P_A$ is bounded by 0.
+- if $P_A$ has an optimal solution = 0 => it implies a valid corner
+  point of the original problem P
+- take the constraint that are fulfilled with '=' as a basis for P.
+**** part 2
+- Find an initial v-shape
+- Let LP P be in standard from:
+\begin{align*}
+\max c^Tx \\
+Ax \leq b
+\end{align*}
+- construct an aux. problem $P_A$
+\begin{align*}
+\max &( c^Tx ) \\
+\text{s.t. } &Ax \leq 0 \\
+&c^T x \leq 1
+\end{align*}
+- This moves all the constraints so that they cross the origin (0,0...0)
+- Figure Tut 4_1
+- an initial v-shape of $P_A$ is defined by $c^Tx \leq  + d-1 linear
+  independent constraints of P.
+- if the dual simplex terminates with a v-shape in the origin => the
+  d-constraint from a valid v-shape in P.
+*** Exercise 2
+\begin{align*}
+\max c^Tx \\
+\text{s.t. } Ax \leq b
+\end{align*}
+- -> dualize
+\begin{align*}
+\min b^Ty \\
+\text{s.t} A^Ty = c \\
+y \geq 0
+\end{align*}
+- bring into standard from
+\begin{align*}
+\max -b^Ty \\
+\text{s.t. } A^Ty \leq c  :x'\\  
+-A^T y \leq -c :x''\\  
+- y \leq 0 :x'''
+\end{align*}
+- dualize again
+- 
+\begin{align*}
+\min c^Tx' -c^Tx''-0x''' \\
+\text{s.t. } Ax' - Ax'' - 1 x''' = -b \\
+x',x'',x''' \geq 0
+\end{align*}
+- drop x'''
+
+\begin{align*}
+\min c^Tx' -x^Tx'' \\
+\text{s.t. }  Ax' - Ax'' \geq -b \\
+x',x'' \geq 0
+\end{align*}
+
+\begin{align*}
+\min c^T(x'-x'') \\
+\text{s.t. } A(x'-x'') \geq -b \\
+x',x'' \geq 0
+\end{align*}
+
+- Substitute $x = x'' - x'$
+\begin{align*}
+\min c^T(-x)
+\text{s.t. } A*(-x) \geq -b
+\end{align*}
+- multiply with -1
+\begin{align*}
+\max c^T x \\
+Ax \leq b
+\end{align*}
+*** Exercise 3
+\begin{align*}
+\max x_1 +x_2 +x_3 \\
+\text{s.t. } -\frac{3}{2}x_1 + 0x_2 + x_3 \leq 1.5 \\
+\frac{3}{2}x_2 +x_3 \leq 6 \\
+x_1 \leq 5 \\
+-x_2 \leq 0 \\
+-x_3 \leq 0 \\
+\end{align*}
+- Basis of x' contains the constraints III, II, V
+- Releasing some of the constraints is related to increasing s (slack variable):
+- The following corner point fulfills the constraints II,III, I
+*** Exercise 4
+\begin{align*}
+\min \begin{pmatrix}
+7 \\
+3 \\
+2 \\
+4
+\end{pmatrix}^T * 
+\begin{pmartix}
+x_m \\
+x_t
+\end{pmatrxi}
+\end{align*}
+
 * Footnotes
 
 [fn:27] Unlikely that this proof will be asked in the exam.
