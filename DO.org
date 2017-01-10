@@ -1058,7 +1058,7 @@ x,y \in \mathbb{N}
   - the goal is to find a subcollection
     $\mathcal{S}'\subseteq\mathcal{S}$ such that
     - $$\bigcup_{S_i \in \mathcal{S}} S_i = U$$
-    - and $\sum_{S_i \in \mathcal{S}} c(S_I)$ is minimal
+    - and $$\sum_{S_i \in \mathcal{S}} c(S_I)$$ is minimal
 - Example
   - $U = \{a,b,c,d,e,f,g\}$
   - $\mathcal{S} = \{ \{a,c,e,g\}, \{a,b,c\}, \{c,d,e\}, \{e,g\}, \{a,f\}\}$
@@ -1073,16 +1073,50 @@ x,y \in \mathbb{N}
   - better solution: $S_1, S_2,S_3,S_5$ with cost 16
     - (apparently optimal)
 - This problem is incredibly hard; it is not only NP-hard to find the
-  optimum solution; even worse one can show, that no algorithm can
-  guarantee a solution whose cost is less than a log n factor more
-  than the optimum. (based on similar complexity theoretical
-  assumption $P \not= NP$)
-** Moddeling SetCover as (Integer) Linear Programm
+  optimum solution; even worse one can show, that no polynomial time
+  algorithm can guarantee a solution whose cost is less than a log n
+  factor more than the optimum. (based on similar complexity
+  theoretical assumption $P \not= NP$)
+** Approximation Ratio
+- For a minimization problem (like SC), we call an algorithm A a
+  $\gamma$-approximation, if for all problem instances I, the
+  algorithm A produces a result R with 
+  - $c(R) \leq \gamma *c(R_{opt})$
+- $\gamma$ is called the approximation guarantee of algorithm A
+** Modeling SetCover as (Integer) Linear Programm
+- We can formulate a setcover problem instance as an _integer_ linear
+  problem.
+- Figure 1
 - Introduce for each subset $S_i$ a variable $x_i \in \{0,1\}$
   - $x_i = 0$ <=> set $S_i$ not selected
   - $x_i = 1$ <=> set $S_i$ is selected
-  - $$\min \sum_{i=1}^{k}c(S_i)x_i$$
+  - $$\min \sum_{i=1}c(S_i)x_i$$
   - $$\forall u \in U: \sum_{i: u \in S_i} x_i \geq 1$$
+** Natural Greedy Algorithm for set cover
+- A very natural algorithm (heuristic) to get "reasonable" solutions
+  for a SC instance works as follows:
+  1. C<- $\emptyset$ (C denotes Elements already covered)
+  2. while (C $\not=$ U)
+     * for each $S_i$, let $\alpha_i = \frac{cost(S_i)}{|S_i -C|}$[fn:30]
+     * let S be the set with minimal $\alpha$
+     * pick S ($x_s$ = 1 ) and for each $u \in S- C$
+       $y_u=\frac{\alpha}{H_n}$ [fn:31]
+     * C <- $C \cup S$
+  3. Output picked sets
+- Figure 2
+- Let us use LP theory to analyze the greedy algorithm.
+  1. Augment greedy alg. to also compute primal integral solution (1) and
+     dual solution (3).
+  2. show that primal integral solution is feasible & has same
+     objective function value as greedy solution (trivial)
+  3. Show that dual solution is feasible
+  4. Show that ratio between objective function values of primal
+     integral and dual solution is $\leq H_n \approx \log n$
+- ad 4: 
+  - In each round, when set S is picked, primal objective function
+    value increases by cost(S).
+  - The dual objective function value increases by $\frac{ cost(S) }{ H_n }$
+  - => at the very end, objective function value of dual solution = $$ \frac{\text{obj.fun. value of primal solution}}{H_n}$$
 * Exercises
 
 ** Sheet 1
@@ -1596,6 +1630,11 @@ x_t
 \end{align*}
 
 * Footnotes
+
+[fn:31] $H_n$ n-th harmonic number $\approx$ log n
+
+[fn:30] $|S_i-C|$: # elements newly covered by $S_i$. $\alpha_i$: cost
+per new element.
 
 [fn:29] red constraint is added by the ellipsoid method to find a
 lower feasible point
