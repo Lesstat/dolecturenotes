@@ -412,8 +412,8 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
     negative cylce.
 - Proof:
   - The ''=>'' is trivial
-  - ''<='' assume $G_f$ does not contain a negative cylce but f is not a
-    minCost flow. We will derive a contradiction hence proofing the Lemma.
+  - ''<='' assume $G_f$ does not contain a negative cycle but f is not a
+    minCostFlow. We will derive a contradiction hence proofing the Lemma.
   - Let $f^*$ be a minCost flow and consider the flow-difference f' =
     $f^* - f$
   - we claim f' has to contain a negative cycle
@@ -1003,13 +1003,93 @@ x,y \in \mathbb{N}
 \end{align*}
 [[file:images/Fig_44_edited.jpg]]
 [[file:images/Fig_45_edited.jpg]]
+** Infeasibilty/ Unboundedness of Primal and Dual LP
+- Primal has optimum solution => Dual has optimum solution
+- Primal has feasible solution with arbitrary objective function value
+  => Dual is infeasible (there is no V-Shape)
+- Primal is infeasible => Dual can be feasible
+  - Figure 1
+- Primal is infeasible => but also possible
+  - Figure 2
+** Complementary Slackness Condition
+- Lemma:
+  - let $x^*$ and $y^*$ be optimum solutions to primal and dual LP in
+    standard form.
+  - Then we have: if $y_i^* > 0$, $a_ix^*=b_i$, that is, if in the
+    dual optimum, the dual variable corresponding to the i-th
+    constraint (in primal) is non-zero, the i-th constraint in the
+    primal must be fulfilled with equality for $x^*$.
+- Proof:
+  - if $y_i^* > 0$, this means that i-th constraint in the primal
+    is one of the constraints forming the highest V-Shape $\hat{=}$ lowest
+    feasible point. All the constraints forming the V-Shape/feasible
+    point are fulfilled with equality
+** Running Time Considerations
+- Primal & Dual Simplex Algorithms typically fast in practice. But no
+  proof showing that some pivot rule yields polynomial running time
+  (in n & m). For fixed/constant dimension, Linear Programming can be
+  solved in O(m) time. (with a constant ~ $2^n$).
+- There are random pivot rules which guarantee subexponential (but not
+  polynomial) running time. (e.g $O(2^{\sqrt{n}}*m)$)
+- There are completely different approaches like interior point or
+  Ellipsoid method which guarantee polynomial running time (in the
+  size of the problem encoding).
+** Idea of the Ellipsoid Method[fn:28] 
+- Only tries to find a feasible point (not necessarily on the boundary
+  but somewhere)
+- Figure 3 [fn:29]
+- if that is possible in poly-time we can find opt. solution in
+  poly-time by binary search
+- How to determine feasible point?
+- Figure 4
+- Invariant: Always maintain ellipsoid containing feasible region
+- two cases:
+  1) center of current ellipsoid is feasible => we are done!
+  2) center of current ellipsoid violates some constraint $a_ix \leq
+     b_i$ => construct new ellipsoid whose volume is by at least a
+     constant factor smaller than volume of old ellipsoid and still
+     contains feasible region (if there is any)
+     - Figure 5
+** LP-Based Approximation of NP-hard Problems
+- Running Example: The Set Cover Problem
+  - Given a universe U of n elements and a collection of subsets
+    $\mathcal{S} =\{S_1,S_2,.. S_u\}, S_i \subseteq U$
+  - and a cost function c: $\mathcal{S} \rightarrow \mathbb{R}^+$
+  - the goal is to find a subcollection
+    $\mathcal{S}'\subseteq\mathcal{S}$ such that
+    - $$\bigcup_{S_i \in \mathcal{S}} S_i = U$$
+    - and $\sum_{S_i \in \mathcal{S}} c(S_I)$ is minimal
+- Example
+  - $U = \{a,b,c,d,e,f,g\}$
+  - $\mathcal{S} = \{ \{a,c,e,g\}, \{a,b,c\}, \{c,d,e\}, \{e,g\}, \{a,f\}\}$
+  | i | c(S_i) |
+  |---+--------|
+  | 1 |      5 |
+  | 2 |      7 |
+  | 3 |      1 |
+  | 4 |      9 |
+  | 5 |      3 |
+  - One feasible solution: $S_1,S_2,S_3,S_4,S_5$ with cost 25.
+  - better solution: $S_1, S_2,S_3,S_5$ with cost 16
+    - (apparently optimal)
+- This problem is incredibly hard; it is not only NP-hard to find the
+  optimum solution; even worse one can show, that no algorithm can
+  guarantee a solution whose cost is less than a log n factor more
+  than the optimum. (based on similar complexity theoretical
+  assumption $P \not= NP$)
+** Moddeling SetCover as (Integer) Linear Programm
+- Introduce for each subset $S_i$ a variable $x_i \in \{0,1\}$
+  - $x_i = 0$ <=> set $S_i$ not selected
+  - $x_i = 1$ <=> set $S_i$ is selected
+  - $$\min \sum_{i=1}^{k}c(S_i)x_i$$
+  - $$\forall u \in U: \sum_{i: u \in S_i} x_i \geq 1$$
 * Exercises
 
 ** Sheet 1
 
 *** Problem 2
 - case 1: There is an s-t path with infinite capacity
-  - flow from s to t is unbounded ( $\infty$ )
+  - flow from s to t is unbounded ( $$\infty$ )
 - case 2: There is no s-t path with inf. capacity
   - there is an s-t-cut where all outgoing edges have finite capacity
   - FF increases total flow by at least 1 in each iteration
@@ -1516,6 +1596,11 @@ x_t
 \end{align*}
 
 * Footnotes
+
+[fn:29] red constraint is added by the ellipsoid method to find a
+lower feasible point
+
+[fn:28] Not part of the exam (probably in Conputational Geometry)
 
 [fn:27] Unlikely that this proof will be asked in the exam.
 
