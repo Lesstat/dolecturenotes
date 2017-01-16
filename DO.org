@@ -386,7 +386,7 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
   - if f(e) < cap(e) then there is an edge $e' = (v,w) \in E_f$ with
     - cost $cost(e')= cost(e)$ and
     - $cap(e') = cap(e) - f(e)$
-  - if f(e)>0 then there is a virtual edge $e'' =(v,w)\in E_f$ with
+  - if f(e)>0 then there is a virtual edge $e'' =(w,v)\in E_f$ with
     - $cap(e'') = f(e)$ and
     - $cost(e'') = - cost(e)$
 - Example
@@ -412,8 +412,8 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
     negative cylce.
 - Proof:
   - The ''=>'' is trivial
-  - ''<='' assume $G_f$ does not contain a negative cylce but f is not a
-    minCost flow. We will derive a contradiction hence proofing the Lemma.
+  - ''<='' assume $G_f$ does not contain a negative cycle but f is not a
+    minCostFlow. We will derive a contradiction hence proofing the Lemma.
   - Let $f^*$ be a minCost flow and consider the flow-difference f' =
     $f^* - f$
   - we claim f' has to contain a negative cycle
@@ -538,7 +538,7 @@ surplus/ supply of flow (b(v)>0) or a demand of flow (b(v)<0) with
     edge costs but without negative cycles. Then there exists a
     potential function $\phi: V -> \mathbb{Z}$ such that the shifted
     edge costs:
-    - $c'(v,w) = c(v,w) + \phi(v)  \phi(w)$
+    - $c'(v,w) = c(v,w) + \phi(v) - \phi(w)$
     - are all non-negative and shortest paths in G(V,E,c) remain
       shortest in G(V,E,c') and vice versa.
 - Proof: 
@@ -719,7 +719,7 @@ with $s_i \geq 0$
 - $$x'' = A^{-1}b_B - \underbrace{ (A_B^{-1})_{ .i } }_{ \text{ith column of $A_B^{-1}$}}$$
 - We can express the improving ray as
   $\vec{r}=x'+\lambda(x''-x')=x'-\lambda(A_B^{-1})_{.i}$
-- we are .. in the constraint violated when increasing \lambda (=
+- we are .. in the constraint violated when increasing $\lambda$ (=
   moving along the ray), so for every constriant l we can do the
   following: $a_l^T(x'-\lambda(A^{-1}_B)_{.i}) \leq b_l$
 - and check when this inequality is fulfilled with equality
@@ -841,7 +841,7 @@ with $s_i \geq 0$
 ** The Dual Simplex Algorithm
 [[file:images/Fig_35_edited.jpg]] Primal Simplex
 [[file:images/Fig_36_edited.jpg]]
-- V-Shape: corener defined by d lin. indep. constrinats which have
+- V-Shape: corner defined by d lin. indep. constraints which have
   bounded optimal solution
 [[file:images/Fig_37_edited.jpg]]
 - Pivoting Step in the dual Simplex
@@ -881,9 +881,9 @@ with $s_i \geq 0$
 - If $x_0$ violates some constriant $h_i \not\in B$, that is,
   $a_{i.}x_o > b_i$, we can use this to derive a next V-Shape by
   determining the lowest feasible point to the constraint set
-  $B\cup\{h_i\}$. Naively this can be done by considering the $n+1
-  \choose n = n$ subsets of $B\cup\{h_i\}$ of cardinality n, computing
-  their intersection point and checking feasibility.
+  $B\cup\{h_i\}$. Naively this can be done by considering the
+  $n+1\choose n = n$ subsets of $B\cup\{h_i\}$ of cardinality n,
+  computing their intersection point and checking feasibility.
 [[file:images/Fig_42_edited.jpg]]
 - $B_{old} = \{h_1,h_2\}, B_{new} = \{h_1,h_3\}$
 - The new V-Shape is the represented by n-1 constraints of the old
@@ -928,13 +928,302 @@ with $s_i \geq 0$
   - Given optimum solution to primal
   - => derive optimal solution to dual LP
   - & vice versa
+** Interpretation of the dual Simplex Algorithm as Primal Simplex Algorithm on the dual LP
+- Primal LP
+\begin{align*}
+\max &( c_1x_1 +c_2x_2 + ... + c_n x_n  )\\
+\text{s.t.} &a_{11}x_1 + a_{12}x_2 +... a_{1n}x_n \leq b_1 \\
+\vdots
+ &a_{m1}x_1 + a_{m2}x_2 +... a_{mn}x_n \leq b_m \\
+\end{align*}
+- Dual LP
+\begin{align*}
+\min &( b_1x_1 +b_2x_2 + ... + b_m x_m  )\\
+\teyt{s.t.} &a_{11}y_1 + a_{21}y_2 +... a_{n1}y_m = c_1 \\
+\vdots
+ &a_{1m}y_1 + a_{2m}y_2 +... a_{nm}y_m = c_m \\
+&y_i \geq 0
+\end{align*}
+- typically m >> n
+- We can bring the dial LP into Standard form by creation for each "="
+  constriants on "$\geq$" and one "$\leq$"constraint and the
+  multiplying wit -1 if necessary.
+- before: DLP had n+m constraints
+- after: DLP has 2n+m constraints in dimension m.
+- If we run primal Simplex algorithm on this LP in standard form, a
+  corner is always represented by m linearly independent constraints
+  fulfilled with equality.
+- Note that n of these tight constraints are always formed by
+  constraints from the set of 2n constraints derived from the
+  equalities in the dual LP.
+- A corner is hence defined by at most n constraints from the group of 2n
+  constraints and $ \geq m-n$ from the ($y_i \geq 0$) group
+- => There are at most n of the $y_i \geq 0$ constraints not fulfilled
+  with equality (that is $y_i > 0$).
+- These $\leq n$ non-negative $y_i$ select and combine as a conic
+  combination $\leq n$ constraints whose weighted normal vectors add
+  up to the objective function.
+- Or: the objective function vector $\vec{C}$ is always in cone of the
+  constraints selected by non-zero $y_i$'s;
+- The respective objective function value of the vertex hence yields
+  an upper bound on the objective function value in the primal.
+- A pivot step in the (primal) Simplex Algorithm on the dual LP can be
+  interpreted as identifying a constraint in the primal space
+  violating the current V-Shape and replacing one current constraint
+  by violating constraint. [fn:27]
+*** Another explanation
+- A corner is defined by m lin. indep. constraints fulfilled with equality
+- from the group of 2n constraints a basis of a corner get at most n
+  of them (due to linear independence requirement)
+- => a corner needs $\geq m-n$ tight constraints from the group of
+  ($y_i \geq 0$) constraints
+- => at least m-n of the $y_i$ have to be zero
+- => at most n of the $y_i$ can be non-zero.
+** Properties of  Primal and Dual LP
+- Primal (P)
+\begin{align*}
+\max c^Tx \\
+Ax \leq b
+\end{align*}
+- Dual (D)
+\begin{align*}
+\min b^Ty \\
+A^Ty =c \\
+y_i \geq 0
+\end{align*}
+- Weak duality: $\forall$ feasible x' for (P) and feasible y' for (D)
+  $c^Tx'\leq b^Ty'$
+- Strong duality: Let $x^*$ be an optimal solution to (P) and $y^*$ an
+  optimal solution to (D) $c^Tx^*=b^Ty^*$
+\begin{align*}
+\max 5x + 7y \\
+x +y \leq 7 \\
+x- y \geq 5 \\
+x,y \in \mathbb{N}
+\end{align*}
+[[file:images/Fig_44_edited.jpg]]
+[[file:images/Fig_45_edited.jpg]]
+** Infeasibilty/ Unboundedness of Primal and Dual LP
+- Primal has optimum solution => Dual has optimum solution
+- Primal has feasible solution with arbitrary objective function value
+  => Dual is infeasible (there is no V-Shape)
+- Primal is infeasible => Dual can be feasible
+  - Figure 1
+- Primal is infeasible => but also possible
+  - Figure 2
+** Complementary Slackness Condition
+- Lemma:
+  - let $x^*$ and $y^*$ be optimum solutions to primal and dual LP in
+    standard form.
+  - Then we have: if $y_i^* > 0$, $a_ix^*=b_i$, that is, if in the
+    dual optimum, the dual variable corresponding to the i-th
+    constraint (in primal) is non-zero, the i-th constraint in the
+    primal must be fulfilled with equality for $x^*$.
+- Proof:
+  - if $y_i^* > 0$, this means that i-th constraint in the primal
+    is one of the constraints forming the highest V-Shape $\hat{=}$ lowest
+    feasible point. All the constraints forming the V-Shape/feasible
+    point are fulfilled with equality
+** Running Time Considerations
+- Primal & Dual Simplex Algorithms typically fast in practice. But no
+  proof showing that some pivot rule yields polynomial running time
+  (in n & m). For fixed/constant dimension, Linear Programming can be
+  solved in O(m) time. (with a constant ~ $2^n$).
+- There are random pivot rules which guarantee subexponential (but not
+  polynomial) running time. (e.g $O(2^{\sqrt{n}}*m)$)
+- There are completely different approaches like interior point or
+  Ellipsoid method which guarantee polynomial running time (in the
+  size of the problem encoding).
+** Idea of the Ellipsoid Method[fn:28] 
+- Only tries to find a feasible point (not necessarily on the boundary
+  but somewhere)
+- Figure 3 [fn:29]
+- if that is possible in poly-time we can find opt. solution in
+  poly-time by binary search
+- How to determine feasible point?
+- Figure 4
+- Invariant: Always maintain ellipsoid containing feasible region
+- two cases:
+  1) center of current ellipsoid is feasible => we are done!
+  2) center of current ellipsoid violates some constraint $a_ix \leq
+     b_i$ => construct new ellipsoid whose volume is by at least a
+     constant factor smaller than volume of old ellipsoid and still
+     contains feasible region (if there is any)
+     - Figure 5
+** LP-Based Approximation of NP-hard Problems
+- Running Example: The Set Cover Problem
+  - Given a universe U of n elements and a collection of subsets
+    $\mathcal{S} =\{S_1,S_2,.. S_u\}, S_i \subseteq U$
+  - and a cost function c: $\mathcal{S} \rightarrow \mathbb{R}^+$
+  - the goal is to find a subcollection
+    $\mathcal{S}'\subseteq\mathcal{S}$ such that
+    - $$\bigcup_{S_i \in \mathcal{S}} S_i = U$$
+    - and $$\sum_{S_i \in \mathcal{S}} c(S_I)$$ is minimal
+- Example
+  - $U = \{a,b,c,d,e,f,g\}$
+  - $\mathcal{S} = \{ \{a,c,e,g\}, \{a,b,c\}, \{c,d,e\}, \{e,g\}, \{a,f\}\}$
+  | i | c(S_i) |
+  |---+--------|
+  | 1 |      5 |
+  | 2 |      7 |
+  | 3 |      1 |
+  | 4 |      9 |
+  | 5 |      3 |
+  - One feasible solution: $S_1,S_2,S_3,S_4,S_5$ with cost 25.
+  - better solution: $S_1, S_2,S_3,S_5$ with cost 16
+    - (apparently optimal)
+- This problem is incredibly hard; it is not only NP-hard to find the
+  optimum solution; even worse one can show, that no polynomial time
+  algorithm can guarantee a solution whose cost is less than a log n
+  factor more than the optimum. (based on similar complexity
+  theoretical assumption $P \not= NP$)
+** Approximation Ratio
+- For a minimization problem (like SC), we call an algorithm A a
+  $\gamma$-approximation, if for all problem instances I, the
+  algorithm A produces a result R with 
+  - $c(R) \leq \gamma *c(R_{opt})$
+- $\gamma$ is called the approximation guarantee of algorithm A
+** Modeling SetCover as (Integer) Linear Programm
+- We can formulate a setcover problem instance as an _integer_ linear
+  problem.
+- Figure 1
+- Introduce for each subset $S_i$ a variable $x_i \in \{0,1\}$
+  - $x_i = 0$ <=> set $S_i$ not selected
+  - $x_i = 1$ <=> set $S_i$ is selected
+  - $$\min \sum_{i=1}c(S_i)x_i$$
+  - $$\forall u \in U: \sum_{i: u \in S_i} x_i \geq 1$$
+** Natural Greedy Algorithm for set cover
+- A very natural algorithm (heuristic) to get "reasonable" solutions
+  for a SC instance works as follows:
+  1. C<- $\emptyset$ (C denotes Elements already covered)
+  2. while (C $\not=$ U)
+     * for each $S_i$, let $\alpha_i = \frac{cost(S_i)}{|S_i -C|}$[fn:30]
+     * let S be the set with minimal $\alpha$
+     * pick S ($x_s$ = 1 ) and for each $u \in S- C$
+       $y_u=\frac{\alpha}{H_n}$ [fn:31]
+     * C <- $C \cup S$
+  3. Output picked sets
+- Figure 2
+- Let us use LP theory to analyze the greedy algorithm.
+  1. Augment greedy alg. to also compute primal integral solution (1) and
+     dual solution (3).
+  2. show that primal integral solution is feasible & has same
+     objective function value as greedy solution (trivial)
+  3. Show that dual solution is feasible
+  4. Show that ratio between objective function values of primal
+     integral and dual solution is $\leq H_n \approx \log n$
+- ad 4: 
+  - In each round, when set S is picked, primal objective function
+    value increases by cost(S).
+  - The dual objective function value increases by $\frac{ cost(S) }{ H_n }$
+  - => at the very end, objective function value of dual solution = $$ \frac{\text{obj.fun. value of primal solution}}{H_n}$$
+- ad 3:
+  - We focus on one constraint for a certain subset S
+  - $$ \sum_{u \in S}y_u \leq c(S)$$
+  - Let us first sort the elements of the universe according to the
+    time they were covered (breaking ties arbitrarily)
+  - In particular for the set S we have an ordering
+    $S=\{u_1,u_2,u_3,..,u_l\}$ ($u_j$ was not covered before $u_i$ for
+    j>i)
+  - Now consider the iteration of the greedy alg when $u_i$ was covered.
+  - At that point all elements $u_i, u_{i+1},..u_l$ in S were not covered.
+  - => $|S-C| \geq l-(i-1) = l + 1 - i$
+  - => $\alpha_S \leq \frac{c(S)}{l+1-i}$
+  - => the set S' that was picked cannot have larger $\alpha_{S'}$
+    (then S would have been picked instead)
+  - reminder: $y_u = \frac{\alpha}{H_n}$
+  - $$ \sum_{u \in S}^{} y_u = y_u_1 +y_u_2 + ... +y_u_n =
+    \sum_{i=1}^{l} y_u_i \leq \sum_{i=1}^{l} \frac{\alpha_S}{H_n} \leq
+    \frac{c(s)}{(l+1-i)*H_n}$$
+  - $$ \frac{1}{H_n} \sum_{i=1}^{l} \frac{1}{l+1-i} = \frac{c(S)}{H_n}
+    \sum_{i=1}^{l} \frac{1}{i} \leq c(s)$$
+  - $ \sum_{i=1}^{l} \frac{1}{i} = H_l$
+** (Randomized) Rounding for Set Cover
+- Now design algorithms which use LP machinery not only for analysis
+  of the algorithm but also for the algorithm itself.
+*** ( Simple ) LP-Rounding
+- Algorithm
+  1. Formulate the set cover problem as ILP
+  2. solve LP relaxiation to optimality
+  3. Pick all sets S for which $x_S > 0$ in opt. solution of LP relaxiation
+- example
+| x_S_1 |   0 |
+| x_S_2 | 0,9 |
+| x_S_3 | 0,1 |
+| x_S_4 |   1 |
+- => pick sets S_2, S_3, S_4 ($\hat{ =} x_S_1 = 0, x_S_2, x_S_3,
+  x_S_4 = 1$)
+- obviously this yields a feasible solution, quality unclear, though.
+- For general set cover problem instances no good bound for the
+  objective function value is known.
+- But for special casses of set cover good bounds can be shown.
+**** Vertice Cover
+- Defintion
+  - Given a graph G(V,E) (undirected) with vertex costs $c:V
+    \rightarrow \mathbb{R}^+$
+  - the _weighted vertex cover problem_ is to determine a subset
+    $C\subseteq V$ of the nodes  such that
+    - $$\forall e \in E: e \cap C \not= \emptyset$$
+    - and $$ \sum_{v \in V}^{} c(v)$$
+  - Figure 1
+  - Figure 2
+  - Figure 3
+- VC is a special case of SC (universe $\hat{=}$ set of all edges,
+  subset $\hat{ =}$ edges adjacent to a node$)  [fn:32]
+- ILP formulation
+  - Introduce variable $x_v \in \{0,1\}$ (for picking nodes)
+  - $$\min \sum_{v \in V}^{}x_v * c(v)$$
+  - s.t $\forall e = \{u,v\} \in E: x_u + x_v \geq 1$
+  - $x_v \in \{0,1\}$
+- LP relaxiation
+  - $$\min \sum_{v \in V}^{}x_v * c(v)$$
+  - s.t $\forall e = \{u,v\} \in E: x_u + x_v \geq 1$
+- We will first show that for the optimum solution x^* of the LP
+  relaxiation we have
+  - $x_v^* \in  \{ 0, \frac{1}{2}, 1\}$
+- Figure 4
+- When rounding up all variables $x_v^* > 0$, the objective function
+  value can at mode _double_ from the LP optimum
+- Since LP-Optimum is a _lower bound_ to integral optimum, we get a
+  solution of cost at most twice the optimum (integral) solution
+- Proof
+  - We will show something stronger even, namely that _all corners_ of
+    the polyhedron induced by $\forall e=\{u,v\}\in E:x_u + x_v\leq 1$
+    have coordinates in $\{0,0.5,1\}$
+  - Lemma:
+    - The corners of the polyhedron of the VC-LP relaxiation have
+      coordinates in $\{0,0.5,1\}$ only.
+  - Proof
+    - Figure 5
+    - a non-corner point of the polyhedron is a point which is the
+      midpoint of two other points of the polyhedron.
+    - If we have a point x of the polyhedron with some component
+      $x_v\not\in \{0,0.5,1\}$, we will exihibit two other points of
+      the polyhedron which have x as midpoint => x cannot be a corner.
+    - Consider all $v \in V$ for which $x_v \not\in \{0,0.5,1\} and
+      let $V^+ = \{v| \frac{1}{2} < x_v < 1\}$ $V^- = \{v | 0 < x_v < \frac{1}{2}\}$
+    - For some very small $\epsilon > 0$  we define points/solutions y
+      and z as follows
+      - $y_v = x_v + \epsilon if v \in V^+$
+      - $y_v = x_v - \epsilon if v \in V^-$
+      - $y_v = x_v  \text{ otherwise }$
+      - $z_v = x_v + \epsilon if v \in V^+$
+      - $z_v = x_v - \epsilon if v \in V^-$
+      - $z_v = x_v  \text{ otherwise }$
+    - As $V^+ \cap V^- = \emptyset$ we know that x,y,z are all
+      distinct. Clearly $ x = \frac{1}{2}(y+z)$.
+    - Consider one edge constraint and cases
+      1. $x_v + x_w > 1$ => choose $\epsilon$ small enough => constraint .....
+      2. $x_v + x_w = 1$ => either $x_v = x_w = \frac{1}{2}$
+         - or $v \in V^+, w \in V^-$ or the other way around
+         - => in any case modification to y or z does not violate constraint.
 * Exercises
 
 ** Sheet 1
 
 *** Problem 2
 - case 1: There is an s-t path with infinite capacity
-  - flow from s to t is unbounded ( $\infty$ )
+  - flow from s to t is unbounded ( $$\infty$ )
 - case 2: There is no s-t path with inf. capacity
   - there is an s-t-cut where all outgoing edges have finite capacity
   - FF increases total flow by at least 1 in each iteration
@@ -1320,7 +1609,132 @@ problem instead of a maximization.
 - <=> $$ 0 = c^T (\sum \lambda_i (x_i - x^*))$$
 - <=> $$0= \sum \lambda_i (c^Tx_i - c^Tx^*)$$ (Satz vom Nullprodukt)
 - $\exists \lambda_i \not= 0$ => $\exists x_i: c^Tx_i = c^Tx^*$
+** Sheet 4
+*** Exersice 1
+**** Part 1
+Assume LP P is in standard form 
+\begin{align*}
+\max c^Tx \\
+Ax \leq b
+\end{align*}
+assume $b \geq 0$
+Find an inital corner of the feasible region.
+Construct auxiliary LP $P_A$
+- introduce variables $\lambda_i$ for every constraint in the original
+  problem P
+\begin{align*}
+\min \sum \lambda \\
+\text{ s.t. } Ax+ \lambda \leq b\\
+\lambda \geq 0
+\end{align*}
+- A corner of the auxiliary problem is at x = 0 and $\lambda = b$
+- Figure out a solution (corner) of P:
+- solve auxiliary Problem using Simplex and the given starting
+  position.
+- obj. Function value of $P_A$ is bounded by 0.
+- if $P_A$ has an optimal solution = 0 => it implies a valid corner
+  point of the original problem P
+- take the constraint that are fulfilled with '=' as a basis for P.
+**** Part 2
+- Find an initial v-shape
+- Let LP P be in standard from:
+\begin{align*}
+\max c^Tx \\
+Ax \leq b
+\end{align*}
+- construct an aux. problem $P_A$
+\begin{align*}
+\max &( c^Tx ) \\
+\text{s.t. } &Ax \leq 0 \\
+&c^T x \leq 1
+\end{align*}
+- This moves all the constraints so that they cross the origin (0,0...0)
+#+CAPTION: Initial constraints in blue, modified and new constraints in red.
+[[file:images/Tut_4_1.jpg]]
+- an initial v-shape of $P_A$ is defined by $c^Tx \leq 1$ and $d-1$ linear
+  independent constraints of P.
+- if the dual simplex terminates with a v-shape in the origin => the
+  d-constraint from a valid v-shape in P.
+*** Exercise 2
+\begin{align*}
+\max c^Tx \\
+\text{s.t. } Ax \leq b
+\end{align*}
+- -> dualize
+\begin{align*}
+\min b^Ty \\
+\text{s.t} A^Ty = c \\
+y \geq 0
+\end{align*}
+- bring into standard from
+\begin{align*}
+\max -b^Ty \\
+\text{s.t. } A^Ty \leq c  :x'\\  
+-A^T y \leq -c :x''\\  
+- y \leq 0 :x'''
+\end{align*}
+- dualize again
+- 
+\begin{align*}
+\min c^Tx' -c^Tx''-0x''' \\
+\text{s.t. } Ax' - Ax'' - 1 x''' = -b \\
+x',x'',x''' \geq 0
+\end{align*}
+- drop $x'''$
+
+\begin{align*}
+\min c^Tx' -x^Tx'' \\
+\text{s.t. }  Ax' - Ax'' \geq -b \\
+x',x'' \geq 0
+\end{align*}
+
+\begin{align*}
+\min c^T(x'-x'') \\
+\text{s.t. } A(x'-x'') \geq -b \\
+x',x'' \geq 0
+\end{align*}
+
+- Substitute $x = x'' - x'$
+\begin{align*}
+\min c^T(-x)
+\text{s.t. } A*(-x) \geq -b
+\end{align*}
+- multiply with -1
+\begin{align*}
+\max c^T x \\
+Ax \leq b
+\end{align*}
+*** Exercise 3
+\begin{align*}
+\max x_1 +x_2 +x_3 \\
+\text{s.t. } -\frac{3}{2}x_1 + 0x_2 + x_3 \leq 1.5 \\
+\frac{3}{2}x_2 +x_3 \leq 6 \\
+x_1 \leq 5 \\
+-x_2 \leq 0 \\
+-x_3 \leq 0 \\
+\end{align*}
+- Basis of x' contains the constraints III, II, V
+- Releasing some of the constraints is related to increasing s (slack variable):
+- The following corner point fulfills the constraints II,III, I
+[[file:images/Tut_4_2.jpg]]
+*** Exercise 4 
+- Solution can be found on the updated exercise [[http://www.fmi.uni-stuttgart.de/fileadmin/user_upload/fmi/alg/lehre/ws16/dopt/exercises/Exercise04.pdf][sheet]].
+ 
 * Footnotes
+
+[fn:32] common exam question: which is a special case of what?
+
+[fn:31] $H_n$ n-th harmonic number $\approx$ log n
+
+[fn:30] $|S_i-C|$: # elements newly covered by $S_i$. $\alpha_i$: cost
+per new element.
+
+[fn:29] red constraint is added by the ellipsoid method to find a
+lower feasible point
+
+[fn:28] Not part of the exam (probably in Conputational Geometry)
+
+[fn:27] Unlikely that this proof will be asked in the exam.
 
 [fn:26] $\leq n$ non-zero components (of the constraints defining V-Shape)
 
