@@ -1117,6 +1117,106 @@ x,y \in \mathbb{N}
     value increases by cost(S).
   - The dual objective function value increases by $\frac{ cost(S) }{ H_n }$
   - => at the very end, objective function value of dual solution = $$ \frac{\text{obj.fun. value of primal solution}}{H_n}$$
+- ad 3:
+  - We focus on one constraint for a certain subset S
+  - $$ \sum_{u \in S}y_u \leq c(S)$$
+  - Let us first sort the elements of the universe according to the
+    time they were covered (breaking ties arbitrarily)
+  - In particular for the set S we have an ordering
+    $S=\{u_1,u_2,u_3,..,u_l\}$ ($u_j$ was not covered before $u_i$ for
+    j>i)
+  - Now consider the iteration of the greedy alg when $u_i$ was covered.
+  - At that point all elements $u_i, u_{i+1},..u_l$ in S were not covered.
+  - => $|S-C| \geq l-(i-1) = l + 1 - i$
+  - => $\alpha_S \leq \frac{c(S)}{l+1-i}$
+  - => the set S' that was picked cannot have larger $\alpha_{S'}$
+    (then S would have been picked instead)
+  - reminder: $y_u = \frac{\alpha}{H_n}$
+  - $$ \sum_{u \in S}^{} y_u = y_u_1 +y_u_2 + ... +y_u_n =
+    \sum_{i=1}^{l} y_u_i \leq \sum_{i=1}^{l} \frac{\alpha_S}{H_n} \leq
+    \frac{c(s)}{(l+1-i)*H_n}$$
+  - $$ \frac{1}{H_n} \sum_{i=1}^{l} \frac{1}{l+1-i} = \frac{c(S)}{H_n}
+    \sum_{i=1}^{l} \frac{1}{i} \leq c(s)$$
+  - $ \sum_{i=1}^{l} \frac{1}{i} = H_l$
+** (Randomized) Rounding for Set Cover
+- Now design algorithms which use LP machinery not only for analysis
+  of the algorithm but also for the algorithm itself.
+*** ( Simple ) LP-Rounding
+- Algorithm
+  1. Formulate the set cover problem as ILP
+  2. solve LP relaxiation to optimality
+  3. Pick all sets S for which $x_S > 0$ in opt. solution of LP relaxiation
+- example
+| x_S_1 |   0 |
+| x_S_2 | 0,9 |
+| x_S_3 | 0,1 |
+| x_S_4 |   1 |
+- => pick sets S_2, S_3, S_4 ($\hat{ =} x_S_1 = 0, x_S_2, x_S_3,
+  x_S_4 = 1$)
+- obviously this yields a feasible solution, quality unclear, though.
+- For general set cover problem instances no good bound for the
+  objective function value is known.
+- But for special casses of set cover good bounds can be shown.
+**** Vertice Cover
+- Defintion
+  - Given a graph G(V,E) (undirected) with vertex costs $c:V
+    \rightarrow \mathbb{R}^+$
+  - the _weighted vertex cover problem_ is to determine a subset
+    $C\subseteq V$ of the nodes  such that
+    - $$\forall e \in E: e \cap C \not= \emptyset$$
+    - and $$ \sum_{v \in V}^{} c(v)$$
+  - Figure 1
+  - Figure 2
+  - Figure 3
+- VC is a special case of SC (universe $\hat{=}$ set of all edges,
+  subset $\hat{ =}$ edges adjacent to a node$)  [fn:32]
+- ILP formulation
+  - Introduce variable $x_v \in \{0,1\}$ (for picking nodes)
+  - $$\min \sum_{v \in V}^{}x_v * c(v)$$
+  - s.t $\forall e = \{u,v\} \in E: x_u + x_v \geq 1$
+  - $x_v \in \{0,1\}$
+- LP relaxiation
+  - $$\min \sum_{v \in V}^{}x_v * c(v)$$
+  - s.t $\forall e = \{u,v\} \in E: x_u + x_v \geq 1$
+- We will first show that for the optimum solution x^* of the LP
+  relaxiation we have
+  - $x_v^* \in  \{ 0, \frac{1}{2}, 1\}$
+- Figure 4
+- When rounding up all variables $x_v^* > 0$, the objective function
+  value can at mode _double_ from the LP optimum
+- Since LP-Optimum is a _lower bound_ to integral optimum, we get a
+  solution of cost at most twice the optimum (integral) solution
+- Proof
+  - We will show something stronger even, namely that _all corners_ of
+    the polyhedron induced by $\forall e=\{u,v\}\in E:x_u + x_v\leq 1$
+    have coordinates in $\{0,0.5,1\}$
+  - Lemma:
+    - The corners of the polyhedron of the VC-LP relaxiation have
+      coordinates in $\{0,0.5,1\}$ only.
+  - Proof
+    - Figure 5
+    - a non-corner point of the polyhedron is a point which is the
+      midpoint of two other points of the polyhedron.
+    - If we have a point x of the polyhedron with some component
+      $x_v\not\in \{0,0.5,1\}$, we will exihibit two other points of
+      the polyhedron which have x as midpoint => x cannot be a corner.
+    - Consider all $v \in V$ for which $x_v \not\in \{0,0.5,1\} and
+      let $V^+ = \{v| \frac{1}{2} < x_v < 1\}$ $V^- = \{v | 0 < x_v < \frac{1}{2}\}$
+    - For some very small $\epsilon > 0$  we define points/solutions y
+      and z as follows
+      - $y_v = x_v + \epsilon if v \in V^+$
+      - $y_v = x_v - \epsilon if v \in V^-$
+      - $y_v = x_v  \text{ otherwise }$
+      - $z_v = x_v + \epsilon if v \in V^+$
+      - $z_v = x_v - \epsilon if v \in V^-$
+      - $z_v = x_v  \text{ otherwise }$
+    - As $V^+ \cap V^- = \emptyset$ we know that x,y,z are all
+      distinct. Clearly $ x = \frac{1}{2}(y+z)$.
+    - Consider one edge constraint and cases
+      1. $x_v + x_w > 1$ => choose $\epsilon$ small enough => constraint .....
+      2. $x_v + x_w = 1$ => either $x_v = x_w = \frac{1}{2}$
+         - or $v \in V^+, w \in V^-$ or the other way around
+         - => in any case modification to y or z does not violate constraint.
 * Exercises
 
 ** Sheet 1
@@ -1535,7 +1635,7 @@ Construct auxiliary LP $P_A$
 - if $P_A$ has an optimal solution = 0 => it implies a valid corner
   point of the original problem P
 - take the constraint that are fulfilled with '=' as a basis for P.
-**** part 2
+**** Part 2
 - Find an initial v-shape
 - Let LP P be in standard from:
 \begin{align*}
@@ -1549,8 +1649,9 @@ Ax \leq b
 &c^T x \leq 1
 \end{align*}
 - This moves all the constraints so that they cross the origin (0,0...0)
-- Figure Tut 4_1
-- an initial v-shape of $P_A$ is defined by $c^Tx \leq  + d-1 linear
+#+CAPTION: Initial constraints in blue, modified and new constraints in red.
+[[file:images/Tut_4_1.jpg]]
+- an initial v-shape of $P_A$ is defined by $c^Tx \leq 1$ and $d-1$ linear
   independent constraints of P.
 - if the dual simplex terminates with a v-shape in the origin => the
   d-constraint from a valid v-shape in P.
@@ -1579,7 +1680,7 @@ y \geq 0
 \text{s.t. } Ax' - Ax'' - 1 x''' = -b \\
 x',x'',x''' \geq 0
 \end{align*}
-- drop x'''
+- drop $x'''$
 
 \begin{align*}
 \min c^Tx' -x^Tx'' \\
@@ -1615,21 +1716,13 @@ x_1 \leq 5 \\
 - Basis of x' contains the constraints III, II, V
 - Releasing some of the constraints is related to increasing s (slack variable):
 - The following corner point fulfills the constraints II,III, I
-*** Exercise 4
-\begin{align*}
-\min \begin{pmatrix}
-7 \\
-3 \\
-2 \\
-4
-\end{pmatrix}^T * 
-\begin{pmartix}
-x_m \\
-x_t
-\end{pmatrxi}
-\end{align*}
-
+[[file:images/Tut_4_2.jpg]]
+*** Exercise 4 
+- Solution can be found on the updated exercise [[http://www.fmi.uni-stuttgart.de/fileadmin/user_upload/fmi/alg/lehre/ws16/dopt/exercises/Exercise04.pdf][sheet]].
+ 
 * Footnotes
+
+[fn:32] common exam question: which is a special case of what?
 
 [fn:31] $H_n$ n-th harmonic number $\approx$ log n
 
