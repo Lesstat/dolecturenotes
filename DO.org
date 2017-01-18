@@ -1008,9 +1008,9 @@ x,y \in \mathbb{N}
 - Primal has feasible solution with arbitrary objective function value
   => Dual is infeasible (there is no V-Shape)
 - Primal is infeasible => Dual can be feasible
-  - Figure 1
+  [[file:images/Fig_46_edited.jpg]]
 - Primal is infeasible => but also possible
-  - Figure 2
+  [[file:images/Fig_47_edited.jpg]]
 ** Complementary Slackness Condition
 - Lemma:
   - let $x^*$ and $y^*$ be optimum solutions to primal and dual LP in
@@ -1037,11 +1037,11 @@ x,y \in \mathbb{N}
 ** Idea of the Ellipsoid Method[fn:28] 
 - Only tries to find a feasible point (not necessarily on the boundary
   but somewhere)
-- Figure 3 [fn:29]
+[[file:images/Fig_48_edited.jpg]] [fn:29]
 - if that is possible in poly-time we can find opt. solution in
   poly-time by binary search
 - How to determine feasible point?
-- Figure 4
+file:images/Fig_49_edited.jpg
 - Invariant: Always maintain ellipsoid containing feasible region
 - two cases:
   1) center of current ellipsoid is feasible => we are done!
@@ -1049,7 +1049,7 @@ x,y \in \mathbb{N}
      b_i$ => construct new ellipsoid whose volume is by at least a
      constant factor smaller than volume of old ellipsoid and still
      contains feasible region (if there is any)
-     - Figure 5
+file:images/Fig_50_edited.jpg
 ** LP-Based Approximation of NP-hard Problems
 - Running Example: The Set Cover Problem
   - Given a universe U of n elements and a collection of subsets
@@ -1079,14 +1079,14 @@ x,y \in \mathbb{N}
   theoretical assumption $P \not= NP$)
 ** Approximation Ratio
 - For a minimization problem (like SC), we call an algorithm A a
-  $\gamma$-approximation, if for all problem instances I, the
+  $\gamma$ -approximation, if for all problem instances I, the
   algorithm A produces a result R with 
   - $c(R) \leq \gamma *c(R_{opt})$
 - $\gamma$ is called the approximation guarantee of algorithm A
 ** Modeling SetCover as (Integer) Linear Programm
 - We can formulate a setcover problem instance as an _integer_ linear
   problem.
-- Figure 1
+[[file:images/Fig_51_edited.jpg]]
 - Introduce for each subset $S_i$ a variable $x_i \in \{0,1\}$
   - $x_i = 0$ <=> set $S_i$ not selected
   - $x_i = 1$ <=> set $S_i$ is selected
@@ -1103,7 +1103,8 @@ x,y \in \mathbb{N}
        $y_u=\frac{\alpha}{H_n}$ [fn:31]
      * C <- $C \cup S$
   3. Output picked sets
-- Figure 2
+[[file:images/Fig_52_edited.jpg]]
+- numbers in parentheses correspond to circled numbers in figure above.
 - Let us use LP theory to analyze the greedy algorithm.
   1. Augment greedy alg. to also compute primal integral solution (1) and
      dual solution (3).
@@ -1164,10 +1165,13 @@ x,y \in \mathbb{N}
   - the _weighted vertex cover problem_ is to determine a subset
     $C\subseteq V$ of the nodes  such that
     - $$\forall e \in E: e \cap C \not= \emptyset$$
-    - and $$ \sum_{v \in V}^{} c(v)$$
-  - Figure 1
-  - Figure 2
-  - Figure 3
+    - and $$ \sum_{v \in V}^{} c(v)$$ is minimal
+  #+CAPTION: Red vertices form feasible solution for Vertex Cover
+  [[file:images/Fig_53_edited.jpg]]
+  #+CAPTION: Red vertices also form feasible solution but porbably less optimal for Vertex Cover
+  [[file:images/Fig_54_edited.jpg]]
+  #+CAPTION: Blue vertices form infeasible solution for Vertex Cover
+  [[file:images/Fig_55_edited.jpg]]
 - VC is a special case of SC (universe $\hat{=}$ set of all edges,
   subset $\hat{ =}$ edges adjacent to a node$)  [fn:32]
 - ILP formulation
@@ -1181,7 +1185,7 @@ x,y \in \mathbb{N}
 - We will first show that for the optimum solution x^* of the LP
   relaxiation we have
   - $x_v^* \in  \{ 0, \frac{1}{2}, 1\}$
-- Figure 4
+  [[file:images/Fig_56_edited.jpg]]
 - When rounding up all variables $x_v^* > 0$, the objective function
   value can at mode _double_ from the LP optimum
 - Since LP-Optimum is a _lower bound_ to integral optimum, we get a
@@ -1193,8 +1197,8 @@ x,y \in \mathbb{N}
   - Lemma:
     - The corners of the polyhedron of the VC-LP relaxiation have
       coordinates in $\{0,0.5,1\}$ only.
-  - Proof
-    - Figure 5
+  - Proof 
+[[file:images/Fig_57_edited.jpg]]
     - a non-corner point of the polyhedron is a point which is the
       midpoint of two other points of the polyhedron.
     - If we have a point x of the polyhedron with some component
