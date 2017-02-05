@@ -1158,8 +1158,8 @@ file:images/Fig_50_edited.jpg
 - For general set cover problem instances no good bound for the
   objective function value is known.
 - But for special casses of set cover good bounds can be shown.
-**** Vertice Cover
-- Defintion
+**** Vertex Cover
+- Definition
   - Given a graph G(V,E) (undirected) with vertex costs $c:V
     \rightarrow \mathbb{R}^+$
   - the _weighted vertex cover problem_ is to determine a subset
@@ -1221,6 +1221,104 @@ file:images/Fig_50_edited.jpg
       2. $x_v + x_w = 1$ => either $x_v = x_w = \frac{1}{2}$
          - or $v \in V^+, w \in V^-$ or the other way around
          - => in any case modification to y or z does not violate constraint.
+**** Another Deterministic Rounding Scheme (frequency based rounding)
+- (also good for special cases of SetCover)
+- Let f be the maximum number of occurrences an element $u \in U$ in
+  the sets $S_1, S_2, S_3$
+- Example
+  - $\{\{a,b,c\}, \{a,d,e\}, \{b,c,e\}, \{b,f,g\}\}$
+  - a: 2
+  - *b: 3*
+  - c: 2
+  - d: 1
+  - e: 2
+  - f: 1
+  - g: 1
+- This gives rise to the following simple rounding scheme
+  1) Solve LP relaxation to optimality
+  2) Pick all sets S for which $x_S \geq \frac{1}{f}$
+- Figure 24.01_1
+- Since every variable is increased at most by a factor f the
+  objective function value increases at most by a factor f due to the
+  rounding procedures.
+- $$\forall u \in U: \sum_{S: u \in S}^{}x_s \geq 1$$
+  - This some contains $\leq f$ summands.
+  - Because this was a constraint in the LP relaxation there must be
+    at least one $x_s \geq \frac{1}{f}$. If there would not be one the
+    solution would be no feasible solution to the LP.
+  - Therefore the solution yieled by this rounding scheme must be
+    feasible.
+- Natural instances with small f-value
+**** Randomized Rounding Procedure for SetCover
+- Result: A solution which is certainly feasible and has approximation
+  ratio O(log n)
+- Algorithm
+  1) Formulate SetCover instance as ILP
+  2) Solve LP relaxation & get opt. solution $x^*$
+  3) repeat
+     - repeat $\approx \log n$
+       - interpret $x^*$ as probabilities for picking sets
+       - make random selection -> C
+       - $C' = C' \cup C$
+  4) until C' feasible & $cost(C') \leq \approx \log n * OPT_{LP}$
+**** Independent / Stable Set Problem
+- Given a Graph G(V,E) find a subset $I \subseteq V$
+- s.t. $\forall v,w \in I: \{v,w\} \not\in E$
+- and |I| maximal
+- Formulation as Integer Linear Program:
+  - introduce $x_v \in \{0,1\}$ for each $v \in V$
+  - $$\max \sum_{v \in V}^{}x_v$$
+  - $\forall e = \{u,v\} \in E: x_u +x_v \leq 1$
+  - $x_v \in \{0,1\}$ [fn:33]
+**** The Primal-Dual Scheme
+- High-Level idea:
+  - start with pair of primal and dual solution
+    - $(x^1, y^1)$
+    - where x^1 is not feasible and y^1 is feasible
+    - (both with initial objective function value 0)
+- Primal
+  - $\min \sum_{}^{}x_s$
+  - $\forall u \in U: \sum_{S:u \in U}^{}x_s \geq 1$
+  - $X_s \geq 0$
+- Dual
+  - $\max y_u$
+  - $\forall S \in S: \sum_{u \in S}^{}y_u \leq c(S)$
+  - $y_u \geq 0$
+- x^1 has a very good primal objective function value (but is not feasible)
+- y^1 has a very bad dual objective function value (but is feasible)
+- Goal
+  - "Make primal solution more feasible & dual solution better (while
+    maintaining feasibility)"
+- Algorithm
+  1) start with primal solution x=0 dual solution y=0
+  2) $C = \emptyset$
+  3) Pick some uncovered element $u \in U$ and increase its dual
+     variable y_u until some dual constraints become tight; add the
+     respective sets of tight constraints to C (set respective x_s
+     to 1)
+  4) if there are still uncovered elements, goto 3
+- Lemma:
+  - Let f be the maximum frequency of an element $u \in U$ in the
+    sets. Then we have for the resulting solutions $\tilde{x}$ and
+    $\tilde{y}$ of our algorithm
+    - $c^T \tilde{x} \leq f 1^T \tilde{y}$
+    - "obj.func value of primal solution" $\leq$ "obj.func value of dual solution"
+- proof: We have
+  - $c^T\tilde{x}= \sum_{S \in C}^{}c_s = \sum_{S \in C}^{} \sum_{u
+    \in S}^{} y_u \leq f * \sum_{u \in U}^{}y_u$ [fn:34] [fn:35]
+**** Further Example: Uncapacitated Facility Location
+- Given
+- a set of locations V with distance measurements $c_{ij} \forall
+  i,j\in V$ (satisfying triangle inequality)
+  - a subset $F \subseteq V$ of potential facility locations; each
+    $i\in F$ has associated opening cost f,
+  - a set of demand locations D=V-F; "connecting" $j \in D$ with i \in
+    F is $c_{ij}$
+  - determine subset $F' \subseteq F$ of locations to open facilities
+    and assign each $j \in D$ to its nearest open facility such that
+    total cost
+    - $$ \sum_{i \in F}^{}f_i + \sum_{j \in D}^{} \min_{i \in F'} c_{ij}$$
+  - 
 * Exercises
 
 ** Sheet 1
@@ -1726,7 +1824,17 @@ x_1 \leq 5 \\
  
 * Footnotes
 
-[fn:32] common exam question: which is a special case of what?
+[fn:35] Excersize: Give example of SC instance where greedy algorithm
+produces always a "bad" solution. Run primal-dual algorithm on this
+instance. Last part could also be exam question.
+
+[fn:34] second "=" is according to the rule of algorithm to pick sets
+
+[fn:33] possible exam question: he gives a graph problem and we should
+model it as ILP
+
+[fn:32] common exam question: which is a special case of what? And why
+is vertex cover a special case of set cover
 
 [fn:31] $H_n$ n-th harmonic number $\approx$ log n
 
